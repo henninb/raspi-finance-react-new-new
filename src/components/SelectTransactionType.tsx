@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 interface Props {
   onChangeFunction: any;
@@ -41,13 +41,13 @@ export default function SelectTransactionType({
       <Autocomplete
         defaultValue={value ? value : "undefined"}
         value={value ? value : "undefined"}
-        onChange={(_event, newValue) => {
+        onChange={(_event :any, newValue: any) => {
           console.log(`onChange newValue: '${newValue}'`);
           setValue(newValue);
           onChangeFunction(newValue);
         }}
         inputValue={inputValue || "undefined"}
-        onInputChange={(_event, newInputValue) => {
+        onInputChange={(_event: any, newInputValue: any) => {
           if (keyPressValue === "undefined") {
             setInputValue(newInputValue);
           } else {
@@ -57,7 +57,7 @@ export default function SelectTransactionType({
         }}
         style={{ width: 140 }}
         options={options}
-        renderInput={(params) => {
+        renderInput={(params: any) => {
           return <TextField {...params} onKeyDown={(e) => handleKeyDown(e)} />;
         }}
       />

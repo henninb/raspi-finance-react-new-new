@@ -1,66 +1,42 @@
 import React from "react";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
-// import ReactTooltip from "react-tooltip";
-//import { ReactTooltip } from "react-tooltip";
-import ChevronRightRounded from "@material-ui/icons/ChevronRightRounded";
-import Delete from "@material-ui/icons/Delete";
-import Update from "@material-ui/icons/Update";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import ChevronRightRounded from "@mui/icons-material/ChevronRightRounded";
+import Delete from "@mui/icons-material/Delete";
+import Update from "@mui/icons-material/Update";
 
 export default function ActionButtons({ guid }: any) {
-  const handleTransactionType = (event: any) => {
-    console.log(event.value);
-    // setIconColorToGreen(newTransactionState);
-    // handlerToUpdateTransactionState(
-    //   guid,
-    //   accountNameOwner,
-    //   newTransactionState
-    // );
-    // setTransactionType(newTransactionState);
+  const handleTransactionType = (event: React.MouseEvent<HTMLElement>, value: string | null) => {
+    if (value) {
+      console.log(value);
+    }
   };
 
-  // useEffect(() => {
-  //   if (transactionState !== transactionType) {
-  //     setIconColorToGreen(transactionState);
-  //     setTransactionType(transactionState);
-  //   }
-  // }, [transactionType, transactionState]);
-
-  // let buttonType = 'delete'
   return (
     <div data-testid="action-buttons">
       <ToggleButtonGroup
         value={""}
         exclusive
-        onChange={(e) => handleTransactionType(e)}
+        onChange={handleTransactionType}
         aria-label="text transactionType"
       >
         <div data-testid="move-button">
-          <ToggleButton value="move">
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a data-tip="move transaction">
-              <ChevronRightRounded
-                style={{ color: "black", fontSize: "small" }}
-              />
-            </a>
+          <ToggleButton value="move" aria-label="move transaction">
+            <ChevronRightRounded
+              style={{ color: "black", fontSize: "small" }}
+            />
           </ToggleButton>
         </div>
 
         <div data-testid="update-button">
-          <ToggleButton value="update">
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a data-tip="update transaction">
-              <Update style={{ color: "black", fontSize: "small" }} />
-            </a>
+          <ToggleButton value="update" aria-label="update transaction">
+            <Update style={{ color: "black", fontSize: "small" }} />
           </ToggleButton>
         </div>
 
         <div data-testid="delete-button">
-          <ToggleButton value="delete">
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a data-tip="delete transaction">
-              <Delete style={{ color: "black", fontSize: "small" }} />
-            </a>
+          <ToggleButton value="delete" aria-label="delete transaction">
+            <Delete style={{ color: "black", fontSize: "small" }} />
           </ToggleButton>
         </div>
       </ToggleButtonGroup>

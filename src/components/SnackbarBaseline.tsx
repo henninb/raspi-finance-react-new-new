@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
-//import Alert from "@material-ui/lab/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 export default function SnackbarBaseline({
   message,

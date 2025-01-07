@@ -1,7 +1,9 @@
 import Spinner from "./Spinner";
 import React, { FC } from "react";
-import MaterialTable, { Column } from "material-table";
-import Button from "@material-ui/core/Button";
+//import MaterialTable, { Column } from "material-table";
+//import Button from "@material-ui/core/Button";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import useFetchPaymentRequired from "./queries/useFetchPaymentRequired";
 
@@ -23,90 +25,95 @@ const PaymentRequired: FC = () => {
     history("/transactions/" + accountNameOwner);
   };
 
-  const columns: Column<PaymentRequiredData>[] = [
-    {
-      title: "accountNameOwner",
-      field: "accountNameOwner",
-      cellStyle: { whiteSpace: "nowrap" },
-      render: (rowData: PaymentRequiredData) => {
-        return (
-          <Button
-            style={{ fontSize: ".6rem" }}
-            onClick={() => handleButtonClickLink(rowData.accountNameOwner)}
-          >
-            {rowData.accountNameOwner}
-          </Button>
-        );
-      },
+
+const columns: GridColDef[] = [
+  {
+    field: 'accountNameOwner',
+    headerName: 'accountNameOwner',
+    width: 180, // Optional: specify a width
+    renderCell: (params) => (
+      <Button
+        style={{ fontSize: '.6rem' }}
+        onClick={() => handleButtonClickLink(params.row.accountNameOwner)}
+      >
+        {params.row.accountNameOwner}
+      </Button>
+    ),
+    cellClassName: 'nowrap', // Custom class for CSS if needed
+  },
+  {
+    field: 'accountType',
+    headerName: 'accountType',
+    width: 150,
+  },
+  {
+    field: 'moniker',
+    headerName: 'moniker',
+    width: 150,
+  },
+  {
+    field: 'future',
+    headerName: 'future',
+    type: 'number',
+    editable: false,
+    width: 150,
+    valueFormatter: (params: any) => params.value.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }),
+  },
+  {
+    field: 'outstanding',
+    headerName: 'outstanding',
+    type: 'number',
+    editable: false,
+    width: 150,
+    valueFormatter: (params: any) => params.value.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }),
+  },
+  {
+    field: 'cleared',
+    headerName: 'cleared',
+    type: 'number',
+    editable: false,
+    width: 150,
+    valueFormatter: (params: any) => params.value.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }),
+  },
+  {
+    field: 'aftermath',
+    headerName: 'aftermath',
+    type: 'number',
+    editable: false,
+    width: 150,
+    renderCell: (params: any) => {
+      const aftermath = params.row.cleared + params.row.outstanding + params.row.future;
+      return aftermath.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      });
     },
-    {
-      title: "accountType",
-      field: "accountType",
-      cellStyle: { whiteSpace: "nowrap" },
-    },
-    {
-      title: "moniker",
-      field: "moniker",
-      cellStyle: { whiteSpace: "nowrap" },
-    },
-    {
-      title: "future",
-      field: "future",
-      type: "currency",
-      editable: "never",
-      cellStyle: { whiteSpace: "nowrap" },
-    },
-    {
-      title: "outstanding",
-      field: "outstanding",
-      type: "currency",
-      editable: "never",
-      cellStyle: { whiteSpace: "nowrap" },
-    },
-    {
-      title: "cleared",
-      field: "cleared",
-      type: "currency",
-      editable: "never",
-      cellStyle: { whiteSpace: "nowrap" },
-    },
-    {
-      title: "aftermath",
-      type: "currency",
-      editable: "never",
-      cellStyle: { whiteSpace: "nowrap" },
-      render: (rowData: PaymentRequiredData) => {
-        return (
-          rowData.cleared +
-          rowData.outstanding +
-          rowData.future
-        ).toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        });
-      },
-    },
-  ];
+  },
+];
+
 
   return (
     <div>
       {!isLoading && isSuccess ? (
         <div data-testid="payment-required-table">
-          <MaterialTable
+          <DataGrid
             columns={columns}
-            data={data}
-            title="Payment Required"
-            options={{
-              actionsColumnIndex: -1,
-              paging: false,
-              search: true,
-              addRowPosition: "first",
-              headerStyle: {
-                backgroundColor: "#9965f4",
-                color: "#FFFFFF",
-                zIndex: 0,
-              },
-            }}
+            rows={data}
+            //pageSize={25}
+            autoPageSize
+            //rowsPerPageOptions={[5, 10]}
+            checkboxSelection
+            //disableSelectionOnClick
+            //onProcessRowUpdate={handleRowEdit}
           />
         </div>
       ) : (

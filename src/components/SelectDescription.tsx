@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 import useDescriptionInsert from "./queries/useDescriptionInsert";
 import useFetchDescription from "./queries/useFetchDescription";
+import TextField from "@mui/material/TextField";
 
 interface Description {
   descriptionName: string;
@@ -58,17 +58,17 @@ export default function SelectDescription({
     <div>
       <Autocomplete
         value={value || ""}
-        onChange={(_event, newValue) => {
+        onChange={(_event: any, newValue: any) => {
           setValue(newValue);
           onChangeFunction(newValue);
         }}
         inputValue={inputValue || ""}
-        onInputChange={(_event, newInputValue) => {
+        onInputChange={(_event: any, newInputValue: any) => {
           setInputValue(newInputValue);
         }}
         style={{ width: 140 }}
         options={options}
-        renderInput={(params) => (
+        renderInput={(params: any) => (
           <TextField {...params} onKeyDown={handleKeyDown} />
         )}
       />

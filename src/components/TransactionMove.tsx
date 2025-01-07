@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Button from "@material-ui/core/Button";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@mui/material/Button";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import SnackbarBaseline from "./SnackbarBaseline";
 import useFetchAccount from "./queries/useFetchAccount";
 import useTransactionUpdate from "./queries/useTransactionUpdate";
@@ -21,12 +21,12 @@ export default function TransactionMove({
   closeDialog,
   currentTransaction,
 }: Props) {
-  const [options, setOptions] = useState([]);
-  const [value, setValue] = useState(options[0]);
-  const [inputValue, setInputValue] = useState("");
-  const [accountTypeState, setAccountTypeState] = useState("");
-  const [message, setMessage] = useState("");
-  const [open, setOpen] = useState(false);
+  const [options, setOptions] = useState<string[]>([]);
+  const [value, setValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [accountTypeState, setAccountTypeState] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
 
   const { data, isSuccess } = useFetchAccount();
   const { mutate: updateTransaction } = useTransactionUpdate();
@@ -35,18 +35,18 @@ export default function TransactionMove({
     if (error.response) {
       setMessage(
         `${moduleName}: ${error.response.status} and ${JSON.stringify(
-          error.response.data,
-        )}`,
+          error.response.data
+        )}`
       );
-      console.log(
+      console.error(
         `${moduleName}: ${error.response.status} and ${JSON.stringify(
-          error.response.data,
-        )}`,
+          error.response.data
+        )}`
       );
       setOpen(true);
     } else {
       setMessage(`${moduleName}: failure`);
-      console.log(`${moduleName}: failure`);
+      console.error(`${moduleName}: failure`);
       setOpen(true);
       if (throwIt) {
         throw error;
@@ -61,11 +61,8 @@ export default function TransactionMove({
   const handleButtonClick = useCallback(
     async (currentTransaction: Transaction) => {
       try {
-        const newTransaction: Transaction = Object.assign(
-          {},
-          currentTransaction,
-        );
-        newTransaction.accountNameOwner = value;
+        const newTransaction: Transaction = { ...currentTransaction };
+        newTransaction.accountNameOwner = value ?? ""; // Use empty string if value is null
         updateTransaction({
           oldRow: currentTransaction,
           newRow: newTransaction,
@@ -75,7 +72,7 @@ export default function TransactionMove({
         handleError(error, "updateAccountByGuid", true);
       }
     },
-    [value, updateTransaction, closeDialog],
+    [value, updateTransaction, closeDialog]
   );
 
   useEffect(() => {
@@ -84,9 +81,7 @@ export default function TransactionMove({
 
       const accounts = data
         .filter(({ accountType }: any) => accountType === accountTypeState)
-        .map(({ accountNameOwner }: any) => {
-          return accountNameOwner;
-        });
+        .map(({ accountNameOwner }: any) => accountNameOwner);
 
       setOptions(accounts);
     }
@@ -94,7 +89,7 @@ export default function TransactionMove({
 
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={closeDialog}>
+      <Button variant="outlined" onClick={closeDialog}>
         Open form dialog
       </Button>
       <Dialog
@@ -112,7 +107,6 @@ export default function TransactionMove({
           <Autocomplete
             value={value}
             onChange={(_event, newValue) => {
-              // @ts-ignore
               setValue(newValue);
             }}
             inputValue={inputValue}
@@ -126,24 +120,21 @@ export default function TransactionMove({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDialog} color="primary">
-            Cancel
-          </Button>
+          <Button onClick={closeDialog}>Cancel</Button>
           <Button
             onClick={() => handleButtonClick(currentTransaction)}
-            color="primary"
+            variant="contained"
           >
             Move
           </Button>
         </DialogActions>
       </Dialog>
-      <div>
-        <SnackbarBaseline
-          message={message}
-          state={open}
-          handleSnackbarClose={handleSnackbarClose}
-        />
-      </div>
+      <SnackbarBaseline
+        message={message}
+        state={open}
+        handleSnackbarClose={handleSnackbarClose}
+      />
     </div>
   );
 }
+

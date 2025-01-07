@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import MaterialTable from "material-table";
 import Spinner from "./Spinner";
-import Button from "@material-ui/core/Button";
 import { useNavigate } from "react-router-dom";
 import { currencyFormat, noNaN } from "./Common";
 import SnackbarBaseline from "./SnackbarBaseline";
@@ -10,6 +8,8 @@ import useAccountInsert from "./queries/useAccountInsert";
 import useAccountDelete from "./queries/useAccountDelete";
 import useFetchTotals from "./queries/useFetchTotals";
 import Account from "./model/Account";
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import Button from "@mui/material/Button";
 
 export default function AccountSummaryTable() {
   const [message, setMessage] = useState("");
@@ -24,6 +24,76 @@ export default function AccountSummaryTable() {
   const handleButtonClickLink = (accountNameOwner: string) => {
     history("/transactions/" + accountNameOwner);
   };
+
+  const columns: GridColDef[] = [
+    {
+      field: 'accountNameOwner',
+      headerName: 'Account Name Owner',
+      width: 200,
+      renderCell: (params) => (
+        <Button
+          style={{ fontSize: '.6rem' }}
+          onClick={() => handleButtonClickLink(params.row.accountNameOwner)}
+        >
+          {params.row.accountNameOwner}
+        </Button>
+      ),
+      cellClassName: 'nowrap',
+    },
+    {
+      field: 'accountType',
+      headerName: 'Account Type',
+      width: 150,
+      cellClassName: 'nowrap',
+    },
+    {
+      field: 'moniker',
+      headerName: 'Moniker',
+      width: 150,
+      cellClassName: 'nowrap',
+    },
+    {
+      field: 'future',
+      headerName: 'Future',
+      width: 150,
+      type: 'number',
+      editable: false,
+      valueFormatter: (params:any) =>
+        params.value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
+      cellClassName: 'nowrap',
+    },
+    {
+      field: 'outstanding',
+      headerName: 'Outstanding',
+      width: 150,
+      type: 'number',
+      editable: false,
+      valueFormatter: (params: any) =>
+        params.value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
+      cellClassName: 'nowrap',
+    },
+    {
+      field: 'cleared',
+      headerName: 'Cleared',
+      width: 150,
+      type: 'number',
+      editable: false,
+      valueFormatter: (params: any) =>
+        params.value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
+      cellClassName: 'nowrap',
+    },
+    {
+      field: 'aftermath',
+      headerName: 'Aftermath',
+      width: 200,
+      type: 'number',
+      editable: false,
+      valueGetter: (params: any) => params.row.cleared + params.row.outstanding + params.row.future,
+      valueFormatter: (params: any) =>
+        params.value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
+      cellClassName: 'nowrap',
+    },
+  ];
 
   const handleError = (error: any, moduleName: string, throwIt: any) => {
     if (error.response) {
@@ -72,8 +142,7 @@ export default function AccountSummaryTable() {
       setTimeout(async () => {
         try {
           await deleteAccount({ oldRow: oldData });
-          // @ts-ignore
-          resolve();
+          resolve("success");
         } catch (error) {
           handleError(error, "onRowDelete", false);
           reject();
@@ -86,96 +155,9 @@ export default function AccountSummaryTable() {
     <>
       {!isLoading && isSuccess && isSuccessTotals ? (
         <div>
-          <MaterialTable
-            columns={[
-              {
-                title: "accountNameOwner",
-                field: "accountNameOwner",
-                cellStyle: { whiteSpace: "nowrap" },
-                render: (rowData) => {
-                  return (
-                    <Button
-                      style={{ fontSize: ".6rem" }}
-                      onClick={() =>
-                        handleButtonClickLink(rowData.accountNameOwner)
-                      }
-                    >
-                      {rowData.accountNameOwner}
-                    </Button>
-                  );
-                },
-              },
-              {
-                title: "accountType",
-                field: "accountType",
-                cellStyle: { whiteSpace: "nowrap" },
-              },
-              {
-                title: "moniker",
-                field: "moniker",
-                cellStyle: { whiteSpace: "nowrap" },
-              },
-              {
-                title: "future",
-                field: "future",
-                type: "currency",
-                editable: "never",
-                cellStyle: { whiteSpace: "nowrap" },
-              },
-              {
-                title: "outstanding",
-                field: "outstanding",
-                type: "currency",
-                editable: "never",
-                cellStyle: { whiteSpace: "nowrap" },
-              },
-              {
-                title: "cleared",
-                field: "cleared",
-                type: "currency",
-                editable: "never",
-                cellStyle: { whiteSpace: "nowrap" },
-              },
-              {
-                title: "aftermath",
-                type: "currency",
-                editable: "never",
-                cellStyle: { whiteSpace: "nowrap" },
-                render: (rowData) => {
-                  return (
-                    rowData.cleared +
-                    rowData.outstanding +
-                    rowData.future
-                  ).toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  });
-                },
-              },
-            ]}
-            data={data}
-            title={`[ $${currencyFormat(
-              noNaN(totals["totals"]),
-            )} ] [ $${currencyFormat(
-              noNaN(totals["totalsCleared"]),
-            )} ]  [ $${currencyFormat(
-              noNaN(totals["totalsOutstanding"]),
-            )} ] [ $${currencyFormat(noNaN(totals["totalsFuture"]))} ]`}
-            options={{
-              actionsColumnIndex: -1,
-              paging: false,
-              search: true,
-              addRowPosition: "first",
-              headerStyle: {
-                backgroundColor: "#9965f4",
-                color: "#FFF",
-                zIndex: 0,
-              },
-            }}
-            editable={{
-              onRowAdd: addRow,
-              onRowDelete: deleteRow,
-            }}
+          <DataGrid
+            columns={columns}
+            rows={data}
           />
           <div>
             <SnackbarBaseline

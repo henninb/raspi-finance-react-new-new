@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 interface Props {
   newAccountType: any;
@@ -63,12 +63,12 @@ export default function SelectReoccurringType({
       <Autocomplete
         value={value || ""}
         // defaultValue={value || ''}
-        onChange={(_event, newValue) => {
+        onChange={(_event: any, newValue: any) => {
           setValue(newValue);
           onChangeFunction(newValue);
         }}
         inputValue={inputValue || ""}
-        onInputChange={(_event, newInputValue) => {
+        onInputChange={(_event : any, newInputValue : any) => {
           if (keyPressValue === "") {
             setInputValue(newInputValue);
           } else {
@@ -78,7 +78,7 @@ export default function SelectReoccurringType({
         }}
         style={{ width: 140 }}
         options={options}
-        renderInput={(params) => (
+        renderInput={(params :any) => (
           <TextField {...params} onKeyDown={(e) => handleKeyDown(e)} />
         )}
       />
