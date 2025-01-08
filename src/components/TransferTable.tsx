@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SelectAccountNameOwnerDebit from "./SelectAccountNameOwnerDebit";
 import Spinner from "./Spinner";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -12,14 +12,25 @@ import useFetchTransfer from "./queries/useFetchTransfer";
 import useTransferInsert from "./queries/useTransferInsert";
 import useTransferDelete from "./queries/useTransferDelete";
 import Transfer from "./model/Transfer";
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import UpdateIcon from '@mui/icons-material/Check';
+import IconButton from '@mui/material/IconButton';
 
 export default function TransferTable() {
   const [message, setMessage] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
+  const [showSpinner, setShowSpinner] = useState(true);
 
   const { data, isSuccess } = useFetchTransfer();
   const { mutate: insertTransfer } = useTransferInsert();
   const { mutate: deleteTransfer } = useTransferDelete();
+
+    useEffect(() => {
+      if (isSuccess) {
+        setShowSpinner(false);
+      }
+    }, [isSuccess]);
 
   const handleSnackbarClose = () => setOpen(false);
 
@@ -54,22 +65,30 @@ export default function TransferTable() {
       headerName: "Transaction Date",
       type: "date",
       width: 180,
-      valueGetter: (params: any) => new Date(params.value), // Ensure values are Date objects
-      renderCell: (params) => moment(params.value).format("YYYY-MM-DD"),
+      renderCell: (params) => {
+        return params.value.toLocaleDateString("en-US");
+      },
+      valueGetter: (params: string) => {
+        //console.log("date-in:" + params)
+        const utcDate = new Date(params);
+        const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+        //console.log("localDate: " + localDate);
+        return localDate;
+      },
       editable: true,
-      renderEditCell: (params: any) => (
-        <LocalizationProvider dateAdapter={AdapterMoment}>
-          <DatePicker
-            value={params.value || null}
-            onChange={(newValue: any) =>
-              params.api
-                .getCellEditorInstances()
-                .forEach((editor: any) => editor.setValue(newValue))
-            }
-            slots={{ textField: TextField }}
-          />
-        </LocalizationProvider>
-      ),
+      // renderEditCell: (params: any) => (
+      //   <LocalizationProvider dateAdapter={AdapterMoment}>
+      //     <DatePicker
+      //       value={params.value || null}
+      //       onChange={(newValue: any) =>
+      //         params.api
+      //           .getCellEditorInstances()
+      //           .forEach((editor: any) => editor.setValue(newValue))
+      //       }
+      //       slots={{ textField: TextField }}
+      //     />
+      //   </LocalizationProvider>
+      // ),
     },
     {
       field: "sourceAccount",
@@ -108,15 +127,59 @@ export default function TransferTable() {
       headerName: "Amount",
       type: "number",
       width: 150,
+      renderCell: (params: any) =>
+        params.value?.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
+      // valueFormatter: (params: any) => {
+      //     console.log("param-value:" + params.value);
+      //     params.value?.toLocaleString("en-US", {
+      //         style: "currency",
+      //         currency: "USD",
+      //       })
+      // },
       editable: true,
+      cellClassName: "nowrap",
+    },
+    {
+      field: "",
+      headerName: "",
+      sortable: false,
+      width: 120,
+      renderCell: (params) => (
+        <>
+        <IconButton       
+          onClick={() => {
+            //handleDeleteRow(params.row)
+          }
+          }
+        >
+          <UpdateIcon />
+        </IconButton>
+        <IconButton       
+          onClick={() => {
+            //handleDeleteRow(params.row)
+          }
+          }
+        >
+          <DeleteIcon />
+        </IconButton>
+        </>
+      ),
     },
   ];
 
   return (
     <div>
        <h2>Transfer Details</h2>
-      {isSuccess ? (
+      { showSpinner ? (
         <div data-testid="transfer-table">
+            <IconButton 
+              //onClick={handleAddRow} 
+              style={{ marginLeft: 8 }}>
+              <AddIcon />
+            </IconButton>
           <DataGrid
             columns={columns}
             rows={data}

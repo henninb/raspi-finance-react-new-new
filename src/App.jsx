@@ -42,7 +42,7 @@ export default class App extends Component {
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="/payments/required">
-                  Payment Required
+                  PaymentRequired
                 </a>
               </li>
               <li className="nav-item">
@@ -58,9 +58,9 @@ export default class App extends Component {
               <li className="nav-item">
                 <SelectAccounts />
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <SelectAccountsNew />
-              </li>
+              </li> */}
             </ul>
           </div>
 

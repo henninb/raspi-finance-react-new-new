@@ -47,7 +47,7 @@ export default function SelectAccounts() {
     return (
       <div className="error-message">
         <p>Error fetching accounts. Please try again.</p>
-        <pre>{JSON.stringify(error, null, 2)}</pre>{" "}
+        {/* <pre>{JSON.stringify(error, null, 2)}</pre>{" "} */}
         {/* Display error details if available */}
       </div>
     );

@@ -1,5 +1,5 @@
 import Spinner from "./Spinner";
-import React, { FC } from "react";
+import React, { useState, useEffect } from "react";
 //import MaterialTable, { Column } from "material-table";
 //import Button from "@material-ui/core/Button";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -16,10 +16,17 @@ interface PaymentRequiredData {
   cleared: number;
 }
 
-const PaymentRequired: FC = () => {
+export default function PaymentRequired() {
+  const [showSpinner, setShowSpinner] = useState(true);
   const history = useNavigate();
 
   const { data, isSuccess, isLoading } = useFetchPaymentRequired();
+
+  useEffect(() => {
+    if (isSuccess) {
+      setShowSpinner(false);
+    }
+  }, [isSuccess]);
 
   const handleButtonClickLink = (accountNameOwner: string) => {
     history("/transactions/" + accountNameOwner);
@@ -96,12 +103,13 @@ const PaymentRequired: FC = () => {
   return (
     <div>
        <h2>Payment Required Details</h2>
-      {!isLoading && isSuccess ? (
+      {showSpinner ?
+      (
         <div data-testid="payment-required-table">
           <DataGrid
             columns={columns}
             rows={data}
-            paginationModel={{ pageSize: data.length, page: 0 }}
+            paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
             getRowId={(row:any) => row.accountNameOwner}
           />
@@ -114,5 +122,3 @@ const PaymentRequired: FC = () => {
     </div>
   );
 };
-
-export default PaymentRequired;

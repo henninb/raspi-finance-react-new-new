@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
 import { currencyFormat, noNaN } from "./Common";
@@ -10,16 +10,27 @@ import useFetchTotals from "./queries/useFetchTotals";
 import Account from "./model/Account";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import UpdateIcon from '@mui/icons-material/Check';
+import IconButton from '@mui/material/IconButton';
 
 export default function AccountSummaryTable() {
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
   const history = useNavigate();
 
   const { data, isSuccess, isLoading } = useFetchAccount();
   const { data: totals, isSuccess: isSuccessTotals } = useFetchTotals();
   const { mutate: insertAccount } = useAccountInsert();
   const { mutate: deleteAccount } = useAccountDelete();
+
+   useEffect(() => {
+     if (isSuccess && isSuccessTotals) {
+       setShowSpinner(false);
+     }
+   }, [isSuccess, isSuccessTotals]); 
 
   const handleButtonClickLink = (accountNameOwner: string) => {
     history("/transactions/" + accountNameOwner);
@@ -58,7 +69,7 @@ export default function AccountSummaryTable() {
       width: 150,
       type: "number",
       editable: false,
-      valueFormatter: (params: any) =>
+      renderCell: (params: any) =>
         params.value?.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
@@ -71,7 +82,7 @@ export default function AccountSummaryTable() {
       width: 150,
       type: "number",
       editable: false,
-      valueFormatter: (params: any) =>
+      renderCell: (params: any) =>
         params.value?.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
@@ -84,7 +95,7 @@ export default function AccountSummaryTable() {
       width: 150,
       type: "number",
       editable: false,
-      valueFormatter: (params: any) =>
+      renderCell: (params: any) =>
         params.value?.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
@@ -104,6 +115,32 @@ export default function AccountSummaryTable() {
     //     }),
     //   cellClassName: "nowrap",
     // },
+    {
+      field: "",
+      headerName: "",
+      sortable: false,
+      width: 120,
+      renderCell: (params) => (
+        <>
+        <IconButton       
+          onClick={() => {
+            //handleDeleteRow(params.row)
+          }
+          }
+        >
+          <UpdateIcon />
+        </IconButton>
+        <IconButton       
+          onClick={() => {
+            //handleDeleteRow(params.row)
+          }
+          }
+        >
+          <DeleteIcon />
+        </IconButton>
+        </>
+      ),
+    },
   ];
 
   const handleError = (error: any, moduleName: string, throwIt: any) => {
@@ -138,8 +175,7 @@ export default function AccountSummaryTable() {
       setTimeout(async () => {
         try {
           insertAccount({ payload: newData });
-          // @ts-ignore
-          resolve();
+          resolve("success");
         } catch (error) {
           handleError(error, "addRow", false);
           reject();
@@ -165,13 +201,18 @@ export default function AccountSummaryTable() {
   return (
     <div>
     <h2>Account Details</h2>
-      {!isLoading && isSuccess && isSuccessTotals ? (
-        <div>
+      {showSpinner ? (
+        <div data-testid="account-table">
+            <IconButton 
+              //onClick={handleAddRow} 
+              style={{ marginLeft: 8 }}>
+              <AddIcon />
+            </IconButton>
           <DataGrid 
             columns={columns} 
             rows={data} 
             getRowId={(row) => row.accountId}
-            paginationModel={{ pageSize: data.length, page: 0 }} // Show all rows
+            paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
           />
           <div>

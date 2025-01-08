@@ -1,13 +1,22 @@
 import useFetchParameters from "./queries/useFetchParameters";
 import useParameterDelete from "./queries/useParameterDelete";
 import useParameterUpdate from "./queries/useParameterUpdate";
+import React, { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import "./parameter.css";
 
 export default function ParameterConfiguration() {
+  const [showSpinner, setShowSpinner] = useState(true);
+
   const { data, isSuccess, isLoading } = useFetchParameters();
   const { mutate: deleteParameter } = useParameterDelete();
   const { mutate: updateParameter } = useParameterUpdate();
+
+    useEffect(() => {
+      if (isSuccess) {
+        setShowSpinner(false);
+      }
+    }, [isSuccess]);
 
   function handleDelete(parameterName: any) {
     const row = { parameterName: parameterName };
@@ -21,7 +30,7 @@ export default function ParameterConfiguration() {
   }
 
   function generateTable(params: any) {
-    const rows = params.map((param: any, index: any) => {
+    const rows = params?.map((param: any, index: any) => {
       return (
         <tr key={index} id={index} className="config-var-item ember-view">
           <td>
@@ -169,7 +178,7 @@ export default function ParameterConfiguration() {
 
   return (
     <div>
-      {!isLoading && isSuccess ? (
+      {showSpinner ? (
         <div>
           <h1>Configuration</h1>
           {generateTable(data)}
