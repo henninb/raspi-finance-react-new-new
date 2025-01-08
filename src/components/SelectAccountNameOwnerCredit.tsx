@@ -10,14 +10,19 @@ export type Props = {
 type OptionType = {
   value: string;
   label: string;
-}
+};
 
 export default function SelectAccountNameOwnerCredit({
   onChangeFunction,
   currentValue,
 }: Props) {
-  const [selectedOption, setSelectedOption] = useState<{ value: string; label: string } | null>(null);
-  const [accountTypeOptions, setAccountTypeOptions] = useState<{ value: string; label: string }[]>([]);
+  const [selectedOption, setSelectedOption] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
+  const [accountTypeOptions, setAccountTypeOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const { data, isSuccess } = useFetchAccount();
 
@@ -33,7 +38,9 @@ export default function SelectAccountNameOwnerCredit({
       setAccountTypeOptions(optionList);
 
       // Pre-select the currentValue if it exists in the options
-      const initialOption = optionList.find((option: OptionType) => option.value === currentValue);
+      const initialOption = optionList.find(
+        (option: OptionType) => option.value === currentValue,
+      );
       setSelectedOption(initialOption || null);
     }
   }, [data, isSuccess, currentValue]);

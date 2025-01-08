@@ -35,13 +35,13 @@ export default function TransactionMove({
     if (error.response) {
       setMessage(
         `${moduleName}: ${error.response.status} and ${JSON.stringify(
-          error.response.data
-        )}`
+          error.response.data,
+        )}`,
       );
       console.error(
         `${moduleName}: ${error.response.status} and ${JSON.stringify(
-          error.response.data
-        )}`
+          error.response.data,
+        )}`,
       );
       setOpen(true);
     } else {
@@ -72,7 +72,7 @@ export default function TransactionMove({
         handleError(error, "updateAccountByGuid", true);
       }
     },
-    [value, updateTransaction, closeDialog]
+    [value, updateTransaction, closeDialog],
   );
 
   useEffect(() => {
@@ -137,4 +137,3 @@ export default function TransactionMove({
     </div>
   );
 }
-

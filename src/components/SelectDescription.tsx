@@ -27,7 +27,7 @@ export default function SelectDescription({
   useEffect(() => {
     if (isSuccess && data) {
       const descriptions = data.map(
-        ({ descriptionName }: Description) => descriptionName
+        ({ descriptionName }: Description) => descriptionName,
       );
       setOptions(descriptions);
     }
@@ -40,7 +40,7 @@ export default function SelectDescription({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Tab" && inputValue) {
       const filteredOptions = options.filter((option) =>
-        option.includes(inputValue)
+        option.includes(inputValue),
       );
       if (filteredOptions.length > 0) {
         const selectedValue = filteredOptions[0]; // Select the first match
@@ -75,4 +75,3 @@ export default function SelectDescription({
     </div>
   );
 }
-

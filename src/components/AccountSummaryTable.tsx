@@ -8,7 +8,7 @@ import useAccountInsert from "./queries/useAccountInsert";
 import useAccountDelete from "./queries/useAccountDelete";
 import useFetchTotals from "./queries/useFetchTotals";
 import Account from "./model/Account";
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 
 export default function AccountSummaryTable() {
@@ -27,72 +27,83 @@ export default function AccountSummaryTable() {
 
   const columns: GridColDef[] = [
     {
-      field: 'accountNameOwner',
-      headerName: 'Account Name Owner',
+      field: "accountNameOwner",
+      headerName: "Account Name Owner",
       width: 200,
       renderCell: (params) => (
         <Button
-          style={{ fontSize: '.6rem' }}
+          style={{ fontSize: ".6rem" }}
           onClick={() => handleButtonClickLink(params.row.accountNameOwner)}
         >
           {params.row.accountNameOwner}
         </Button>
       ),
-      cellClassName: 'nowrap',
+      cellClassName: "nowrap",
     },
     {
-      field: 'accountType',
-      headerName: 'Account Type',
+      field: "accountType",
+      headerName: "Account Type",
       width: 150,
-      cellClassName: 'nowrap',
+      cellClassName: "nowrap",
     },
     {
-      field: 'moniker',
-      headerName: 'Moniker',
+      field: "moniker",
+      headerName: "Moniker",
       width: 150,
-      cellClassName: 'nowrap',
+      cellClassName: "nowrap",
     },
     {
-      field: 'future',
-      headerName: 'Future',
+      field: "future",
+      headerName: "Future",
       width: 150,
-      type: 'number',
-      editable: false,
-      valueFormatter: (params:any) =>
-        params.value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
-      cellClassName: 'nowrap',
-    },
-    {
-      field: 'outstanding',
-      headerName: 'Outstanding',
-      width: 150,
-      type: 'number',
+      type: "number",
       editable: false,
       valueFormatter: (params: any) =>
-        params.value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
-      cellClassName: 'nowrap',
+        params.value?.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
+      cellClassName: "nowrap",
     },
     {
-      field: 'cleared',
-      headerName: 'Cleared',
+      field: "outstanding",
+      headerName: "Outstanding",
       width: 150,
-      type: 'number',
+      type: "number",
       editable: false,
       valueFormatter: (params: any) =>
-        params.value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
-      cellClassName: 'nowrap',
+        params.value?.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
+      cellClassName: "nowrap",
     },
     {
-      field: 'aftermath',
-      headerName: 'Aftermath',
-      width: 200,
-      type: 'number',
+      field: "cleared",
+      headerName: "Cleared",
+      width: 150,
+      type: "number",
       editable: false,
-      valueGetter: (params: any) => params.row.cleared + params.row.outstanding + params.row.future,
       valueFormatter: (params: any) =>
-        params.value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }),
-      cellClassName: 'nowrap',
+        params.value?.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
+      cellClassName: "nowrap",
     },
+    // {
+    //   field: "aftermath",
+    //   headerName: "Aftermath",
+    //   width: 200,
+    //   type: "number",
+    //   editable: false,
+    //   valueFormatter: (params: any) =>
+    //     params.value?.toLocaleString("en-US", {
+    //       style: "currency",
+    //       currency: "USD",
+    //     }),
+    //   cellClassName: "nowrap",
+    // },
   ];
 
   const handleError = (error: any, moduleName: string, throwIt: any) => {
@@ -155,9 +166,10 @@ export default function AccountSummaryTable() {
     <>
       {!isLoading && isSuccess && isSuccessTotals ? (
         <div>
-          <DataGrid
-            columns={columns}
-            rows={data}
+          <DataGrid 
+            columns={columns} 
+            rows={data} 
+            getRowId={(row) => row.accountId} // Set the rowId to accountId
           />
           <div>
             <SnackbarBaseline

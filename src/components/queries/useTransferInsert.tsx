@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from "react-query";
 import Transfer from "../model/Transfer";
 
 const setupNewTransfer = (payload: Transfer) => {
-  console.log(JSON.stringify(payload))
-  console.log('transfer payload')
+  console.log(JSON.stringify(payload));
+  console.log("transfer payload");
   return {
     sourceAccount: payload.sourceAccount,
     destinationAccount: payload.destinationAccount,

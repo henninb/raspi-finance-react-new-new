@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import SelectAccountNameOwnerDebit from "./SelectAccountNameOwnerDebit";
 import Spinner from "./Spinner";
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import SnackbarBaseline from "./SnackbarBaseline";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import moment from "moment";
-import TextField from '@mui/material/TextField';
+import TextField from "@mui/material/TextField";
 import useFetchTransfer from "./queries/useFetchTransfer";
 import useTransferInsert from "./queries/useTransferInsert";
 import useTransferDelete from "./queries/useTransferDelete";
@@ -48,56 +48,69 @@ export default function TransferTable() {
     }
   };
 
-const columns: GridColDef[] = [
-  {
-    field: "transactionDate",
-    headerName: "Transaction Date",
-    type: "date",
-    width: 180,
-    renderCell: (params) => moment(params.value).format("YYYY-MM-DD"),
-    editable: true,
-    renderEditCell: (params: any) => (
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <DatePicker
-          value={params.value || null}
-          onChange={(newValue: any) => params.api.getCellEditorInstances().forEach((editor: any) => editor.setValue(newValue))}
-          slots={{ textField: TextField }}
+  const columns: GridColDef[] = [
+    {
+      field: "transactionDate",
+      headerName: "Transaction Date",
+      type: "date",
+      width: 180,
+      valueGetter: (params: any) => new Date(params.value), // Ensure values are Date objects
+      renderCell: (params) => moment(params.value).format("YYYY-MM-DD"),
+      editable: true,
+      renderEditCell: (params: any) => (
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <DatePicker
+            value={params.value || null}
+            onChange={(newValue: any) =>
+              params.api
+                .getCellEditorInstances()
+                .forEach((editor: any) => editor.setValue(newValue))
+            }
+            slots={{ textField: TextField }}
+          />
+        </LocalizationProvider>
+      ),
+    },
+    {
+      field: "sourceAccount",
+      headerName: "Source Account",
+      width: 180,
+      editable: true,
+      renderEditCell: (params: any) => (
+        <SelectAccountNameOwnerDebit
+          onChangeFunction={(value: any) =>
+            params.api
+              .getCellEditorInstances()
+              .forEach((editor: any) => editor.setValue(value))
+          }
+          currentValue={params.value || ""}
         />
-      </LocalizationProvider>
-    ),
-  },
-  {
-    field: "sourceAccount",
-    headerName: "Source Account",
-    width: 180,
-    editable: true,
-    renderEditCell: (params: any) => (
-      <SelectAccountNameOwnerDebit
-        onChangeFunction={(value: any) => params.api.getCellEditorInstances().forEach((editor: any) => editor.setValue(value))}
-        currentValue={params.value || ""}
-      />
-    ),
-  },
-  {
-    field: "destinationAccount",
-    headerName: "Destination Account",
-    width: 200,
-    editable: true,
-    renderEditCell: (params: any) => (
-      <SelectAccountNameOwnerDebit
-        onChangeFunction={(value: any) => params.api.getCellEditorInstances().forEach((editor: any) => editor.setValue(value))}
-        currentValue={params.value || ""}
-      />
-    ),
-  },
-  {
-    field: "amount",
-    headerName: "Amount",
-    type: "number",
-    width: 150,
-    editable: true,
-  },
-];
+      ),
+    },
+    {
+      field: "destinationAccount",
+      headerName: "Destination Account",
+      width: 200,
+      editable: true,
+      renderEditCell: (params: any) => (
+        <SelectAccountNameOwnerDebit
+          onChangeFunction={(value: any) =>
+            params.api
+              .getCellEditorInstances()
+              .forEach((editor: any) => editor.setValue(value))
+          }
+          currentValue={params.value || ""}
+        />
+      ),
+    },
+    {
+      field: "amount",
+      headerName: "Amount",
+      type: "number",
+      width: 150,
+      editable: true,
+    },
+  ];
 
   return (
     <div>
@@ -108,6 +121,7 @@ const columns: GridColDef[] = [
             rows={data}
             autoPageSize
             checkboxSelection
+            getRowId={(row: Transfer) => row.transferId}
             sx={{
               "& .MuiDataGrid-columnHeaders": {
                 backgroundColor: "#9965f4",

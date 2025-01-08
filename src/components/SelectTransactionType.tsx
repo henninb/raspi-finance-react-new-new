@@ -41,7 +41,7 @@ export default function SelectTransactionType({
       <Autocomplete
         defaultValue={value ? value : "undefined"}
         value={value ? value : "undefined"}
-        onChange={(_event :any, newValue: any) => {
+        onChange={(_event: any, newValue: any) => {
           console.log(`onChange newValue: '${newValue}'`);
           setValue(newValue);
           onChangeFunction(newValue);

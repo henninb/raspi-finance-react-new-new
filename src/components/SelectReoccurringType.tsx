@@ -68,7 +68,7 @@ export default function SelectReoccurringType({
           onChangeFunction(newValue);
         }}
         inputValue={inputValue || ""}
-        onInputChange={(_event : any, newInputValue : any) => {
+        onInputChange={(_event: any, newInputValue: any) => {
           if (keyPressValue === "") {
             setInputValue(newInputValue);
           } else {
@@ -78,7 +78,7 @@ export default function SelectReoccurringType({
         }}
         style={{ width: 140 }}
         options={options}
-        renderInput={(params :any) => (
+        renderInput={(params: any) => (
           <TextField {...params} onKeyDown={(e) => handleKeyDown(e)} />
         )}
       />

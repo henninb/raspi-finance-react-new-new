@@ -25,81 +25,83 @@ const PaymentRequired: FC = () => {
     history("/transactions/" + accountNameOwner);
   };
 
-
-const columns: GridColDef[] = [
-  {
-    field: 'accountNameOwner',
-    headerName: 'accountNameOwner',
-    width: 180, // Optional: specify a width
-    renderCell: (params) => (
-      <Button
-        style={{ fontSize: '.6rem' }}
-        onClick={() => handleButtonClickLink(params.row.accountNameOwner)}
-      >
-        {params.row.accountNameOwner}
-      </Button>
-    ),
-    cellClassName: 'nowrap', // Custom class for CSS if needed
-  },
-  {
-    field: 'accountType',
-    headerName: 'accountType',
-    width: 150,
-  },
-  {
-    field: 'moniker',
-    headerName: 'moniker',
-    width: 150,
-  },
-  {
-    field: 'future',
-    headerName: 'future',
-    type: 'number',
-    editable: false,
-    width: 150,
-    valueFormatter: (params: any) => params.value.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }),
-  },
-  {
-    field: 'outstanding',
-    headerName: 'outstanding',
-    type: 'number',
-    editable: false,
-    width: 150,
-    valueFormatter: (params: any) => params.value.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }),
-  },
-  {
-    field: 'cleared',
-    headerName: 'cleared',
-    type: 'number',
-    editable: false,
-    width: 150,
-    valueFormatter: (params: any) => params.value.toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }),
-  },
-  {
-    field: 'aftermath',
-    headerName: 'aftermath',
-    type: 'number',
-    editable: false,
-    width: 150,
-    renderCell: (params: any) => {
-      const aftermath = params.row.cleared + params.row.outstanding + params.row.future;
-      return aftermath.toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      });
+  const columns: GridColDef[] = [
+    {
+      field: "accountNameOwner",
+      headerName: "accountNameOwner",
+      width: 180, // Optional: specify a width
+      renderCell: (params) => (
+        <Button
+          style={{ fontSize: ".6rem" }}
+          onClick={() => handleButtonClickLink(params.row.accountNameOwner)}
+        >
+          {params.row.accountNameOwner}
+        </Button>
+      ),
+      cellClassName: "nowrap", // Custom class for CSS if needed
     },
-  },
-];
-
+    {
+      field: "accountType",
+      headerName: "accountType",
+      width: 150,
+    },
+    {
+      field: "moniker",
+      headerName: "moniker",
+      width: 150,
+    },
+    {
+      field: "future",
+      headerName: "future",
+      type: "number",
+      editable: false,
+      width: 150,
+      valueFormatter: (params: any) =>
+        params.value.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
+    },
+    {
+      field: "outstanding",
+      headerName: "outstanding",
+      type: "number",
+      editable: false,
+      width: 150,
+      valueFormatter: (params: any) =>
+        params.value.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
+    },
+    {
+      field: "cleared",
+      headerName: "cleared",
+      type: "number",
+      editable: false,
+      width: 150,
+      valueFormatter: (params: any) =>
+        params.value.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
+    },
+    {
+      field: "aftermath",
+      headerName: "aftermath",
+      type: "number",
+      editable: false,
+      width: 150,
+      renderCell: (params: any) => {
+        const aftermath =
+          params.row.cleared + params.row.outstanding + params.row.future;
+        return aftermath.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        });
+      },
+    },
+  ];
 
   return (
     <div>

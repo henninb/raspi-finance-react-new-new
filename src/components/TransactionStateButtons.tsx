@@ -20,7 +20,8 @@ export default function TransactionStateButtons({
     return colorOff;
   };
 
-  const [transactionType, setTransactionType] = React.useState(transactionState);
+  const [transactionType, setTransactionType] =
+    React.useState(transactionState);
   const [clearedColor, setClearedColor] = React.useState(
     determineColor("cleared"),
   );

@@ -43,7 +43,7 @@ export default function SelectCategory({
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Tab") {
       const filteredOptions = options.filter((option) =>
-        option.includes(inputValue)
+        option.includes(inputValue),
       );
       if (filteredOptions.length > 0) {
         const selectedOption = filteredOptions[0]; // Select the first match

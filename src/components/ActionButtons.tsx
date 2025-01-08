@@ -6,7 +6,10 @@ import Delete from "@mui/icons-material/Delete";
 import Update from "@mui/icons-material/Update";
 
 export default function ActionButtons({ guid }: any) {
-  const handleTransactionType = (event: React.MouseEvent<HTMLElement>, value: string | null) => {
+  const handleTransactionType = (
+    event: React.MouseEvent<HTMLElement>,
+    value: string | null,
+  ) => {
     if (value) {
       console.log(value);
     }

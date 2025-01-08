@@ -19,7 +19,7 @@ export default function SelectAccounts() {
 
   const handleChange = (
     newValue: SingleValue<Option>,
-    _actionMeta: ActionMeta<Option>
+    _actionMeta: ActionMeta<Option>,
   ) => {
     if (newValue) {
       navigate(`/transactions/${newValue.value}`);
@@ -29,7 +29,11 @@ export default function SelectAccounts() {
   useEffect(() => {
     if (isSuccess && Array.isArray(data)) {
       const optionList = data
-        .filter((account: Account) => typeof account.accountNameOwner === "string" && account.accountNameOwner.trim() !== "")
+        .filter(
+          (account: Account) =>
+            typeof account.accountNameOwner === "string" &&
+            account.accountNameOwner.trim() !== "",
+        )
         .map(({ accountNameOwner }: Account) => ({
           value: accountNameOwner,
           label: accountNameOwner,
@@ -43,7 +47,8 @@ export default function SelectAccounts() {
     return (
       <div className="error-message">
         <p>Error fetching accounts. Please try again.</p>
-        <pre>{JSON.stringify(error, null, 2)}</pre> {/* Display error details if available */}
+        <pre>{JSON.stringify(error, null, 2)}</pre>{" "}
+        {/* Display error details if available */}
       </div>
     );
   }
@@ -72,4 +77,3 @@ export default function SelectAccounts() {
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
-import React from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import React from "react";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 const TransactionTable: React.FC = () => {
   // Define columns (placeholder)
@@ -9,11 +9,8 @@ const TransactionTable: React.FC = () => {
   const rows: any[] = [];
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-      />
+    <div style={{ height: 400, width: "100%" }}>
+      <DataGrid rows={rows} columns={columns} />
     </div>
   );
 };
