@@ -171,6 +171,7 @@ export default function PaymentTable() {
 
   return (
     <div>
+       <h2>Payment Details</h2>
       {isSuccess && parameterSuccess ? (
         <div data-testid="payment-table">
           <DataGrid

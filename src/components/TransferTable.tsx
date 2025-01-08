@@ -114,6 +114,7 @@ export default function TransferTable() {
 
   return (
     <div>
+       <h2>Transfer Details</h2>
       {isSuccess ? (
         <div data-testid="transfer-table">
           <DataGrid

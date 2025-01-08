@@ -95,18 +95,15 @@ const PaymentRequired: FC = () => {
 
   return (
     <div>
+       <h2>Payment Required Details</h2>
       {!isLoading && isSuccess ? (
         <div data-testid="payment-required-table">
           <DataGrid
             columns={columns}
             rows={data}
-            //pageSize={25}
-            //autoPageSize
-            //rowsPerPageOptions={[5, 10]}
-            checkboxSelection
+            paginationModel={{ pageSize: data.length, page: 0 }}
+            hideFooterPagination={true}
             getRowId={(row:any) => row.accountNameOwner}
-            //disableSelectionOnClick
-            //onProcessRowUpdate={handleRowEdit}
           />
         </div>
       ) : (

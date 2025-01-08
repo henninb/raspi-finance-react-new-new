@@ -163,13 +163,16 @@ export default function AccountSummaryTable() {
   };
 
   return (
-    <>
+    <div>
+    <h2>Account Details</h2>
       {!isLoading && isSuccess && isSuccessTotals ? (
         <div>
           <DataGrid 
             columns={columns} 
             rows={data} 
             getRowId={(row) => row.accountId}
+            paginationModel={{ pageSize: data.length, page: 0 }} // Show all rows
+            hideFooterPagination={true}
           />
           <div>
             <SnackbarBaseline
@@ -184,6 +187,6 @@ export default function AccountSummaryTable() {
           <Spinner />
         </div>
       )}
-    </>
+    </div>
   );
 }

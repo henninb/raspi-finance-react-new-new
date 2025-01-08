@@ -1,6 +1,6 @@
 services:
   raspi-finance-react:
-    image: raspi-finance-react:2.0.13
+    image: raspi-finance-react:2.0.16
     hostname: hornsup-react
     container_name: raspi-finance-react
     restart: always
