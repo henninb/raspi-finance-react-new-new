@@ -174,18 +174,17 @@ export default function PaymentTable() {
       {isSuccess && parameterSuccess ? (
         <div data-testid="payment-table">
           <DataGrid
-            data-testid="payment-material-table"
             columns={columns}
             rows={data}
             //pagination
-            checkboxSelection
+            //checkboxSelection
             getRowId={(row:any) => row.paymentId}
-            sx={{
-              "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "#9965f4",
-                color: "#FFFFFF",
-              },
-            }}
+            // sx={{
+            //   "& .MuiDataGrid-columnHeaders": {
+            //     backgroundColor: "#9965f4",
+            //     color: "#FFFFFF",
+            //   },
+            // }}
           />
           <div>
             <SnackbarBaseline
