@@ -50,57 +50,57 @@ const PaymentRequired: FC = () => {
       headerName: "moniker",
       width: 150,
     },
-    {
-      field: "future",
-      headerName: "future",
-      type: "number",
-      editable: false,
-      width: 150,
-      valueFormatter: (params: any) =>
-        params.value.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        }),
-    },
-    {
-      field: "outstanding",
-      headerName: "outstanding",
-      type: "number",
-      editable: false,
-      width: 150,
-      valueFormatter: (params: any) =>
-        params.value.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        }),
-    },
-    {
-      field: "cleared",
-      headerName: "cleared",
-      type: "number",
-      editable: false,
-      width: 150,
-      valueFormatter: (params: any) =>
-        params.value.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        }),
-    },
-    {
-      field: "aftermath",
-      headerName: "aftermath",
-      type: "number",
-      editable: false,
-      width: 150,
-      renderCell: (params: any) => {
-        const aftermath =
-          params.row.cleared + params.row.outstanding + params.row.future;
-        return aftermath.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        });
-      },
-    },
+    // {
+    //   field: "future",
+    //   headerName: "future",
+    //   type: "number",
+    //   editable: false,
+    //   width: 150,
+    //   valueFormatter: (params: any) =>
+    //     params.value.toLocaleString("en-US", {
+    //       style: "currency",
+    //       currency: "USD",
+    //     }),
+    // },
+    // {
+    //   field: "outstanding",
+    //   headerName: "outstanding",
+    //   type: "number",
+    //   editable: false,
+    //   width: 150,
+    //   valueFormatter: (params: any) =>
+    //     params.value.toLocaleString("en-US", {
+    //       style: "currency",
+    //       currency: "USD",
+    //     }),
+    // },
+    // {
+    //   field: "cleared",
+    //   headerName: "cleared",
+    //   type: "number",
+    //   editable: false,
+    //   width: 150,
+    //   valueFormatter: (params: any) =>
+    //     params.value.toLocaleString("en-US", {
+    //       style: "currency",
+    //       currency: "USD",
+    //     }),
+    // },
+    // {
+    //   field: "aftermath",
+    //   headerName: "aftermath",
+    //   type: "number",
+    //   editable: false,
+    //   width: 150,
+    //   renderCell: (params: any) => {
+    //     const aftermath =
+    //       params.row.cleared + params.row.outstanding + params.row.future;
+    //     return aftermath.toLocaleString("en-US", {
+    //       style: "currency",
+    //       currency: "USD",
+    //     });
+    //   },
+    // },
   ];
 
   return (
@@ -111,9 +111,10 @@ const PaymentRequired: FC = () => {
             columns={columns}
             rows={data}
             //pageSize={25}
-            autoPageSize
+            //autoPageSize
             //rowsPerPageOptions={[5, 10]}
             checkboxSelection
+            getRowId={(row:any) => row.accountNameOwner}
             //disableSelectionOnClick
             //onProcessRowUpdate={handleRowEdit}
           />

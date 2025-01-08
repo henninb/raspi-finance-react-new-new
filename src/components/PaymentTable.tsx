@@ -83,6 +83,7 @@ export default function PaymentTable() {
       headerName: "Transaction Date",
       type: "date",
       width: 180,
+      valueGetter: (params: any) => new Date(params.value),
       renderCell: (params) => moment(params.value).format("YYYY-MM-DD"),
       editable: true,
       renderEditCell: (params: any) => (
@@ -179,19 +180,19 @@ export default function PaymentTable() {
             rows={data}
             autoPageSize
             checkboxSelection
+            getRowId={(row:any) => row.paymentId}
+            sx={{
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "#9965f4",
+                color: "#FFFFFF",
+              },
+            }}
           />
           <div>
             <SnackbarBaseline
               message={message}
               state={open}
               handleSnackbarClose={handleSnackbarClose}
-              getRowId={(row: Payment) => row.paymentId}
-              sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#9965f4",
-                  color: "#FFFFFF",
-                },
-              }}
             />
           </div>
         </div>
