@@ -169,7 +169,7 @@ export default function AccountSummaryTable() {
           <DataGrid 
             columns={columns} 
             rows={data} 
-            getRowId={(row) => row.accountId} // Set the rowId to accountId
+            getRowId={(row) => row.accountId}
           />
           <div>
             <SnackbarBaseline

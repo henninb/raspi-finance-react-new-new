@@ -119,15 +119,15 @@ export default function TransferTable() {
           <DataGrid
             columns={columns}
             rows={data}
-            autoPageSize
-            checkboxSelection
+            //autoPageSize
+            //checkboxSelection
             getRowId={(row: Transfer) => row.transferId}
-            sx={{
-              "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "#9965f4",
-                color: "#FFFFFF",
-              },
-            }}
+            // sx={{
+            //   "& .MuiDataGrid-columnHeaders": {
+            //     backgroundColor: "#9965f4",
+            //     color: "#FFFFFF",
+            //   },
+            // }}
           />
         </div>
       ) : (
