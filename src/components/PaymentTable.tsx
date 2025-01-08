@@ -67,8 +67,7 @@ export default function PaymentTable() {
       setTimeout(async () => {
         try {
           await insertPayment({ payload: newData });
-          // @ts-ignore
-          resolve();
+          resolve("success");
         } catch (error) {
           handleError(error, "addRow", false);
           reject();
@@ -136,38 +135,38 @@ export default function PaymentTable() {
       cellClassName: "nowrap",
     },
 
-    {
-      field: "sourceAccount",
-      headerName: "Source Account",
-      width: 180,
-      editable: true,
-      renderEditCell: (params: any) => (
-        <SelectAccountNameOwnerDebit
-          onChangeFunction={(value: any) =>
-            params.api
-              .getCellEditorInstances()
-              .forEach((editor: any) => editor.setValue(value))
-          }
-          currentValue={params.value || ""}
-        />
-      ),
-    },
-    {
-      field: "destinationAccount",
-      headerName: "Destination Account",
-      width: 200,
-      editable: true,
-      renderEditCell: (params: any) => (
-        <SelectAccountNameOwnerCredit
-          onChangeFunction={(value: any) =>
-            params.api
-              .getCellEditorInstances()
-              .forEach((editor: any) => editor.setValue(value))
-          }
-          currentValue={params.value || ""}
-        />
-      ),
-    },
+    // {
+    //   field: "sourceAccount",
+    //   headerName: "Source Account",
+    //   width: 180,
+    //   editable: true,
+    //   renderEditCell: (params: any) => (
+    //     <SelectAccountNameOwnerDebit
+    //       onChangeFunction={(value: any) =>
+    //         params.api
+    //           .getCellEditorInstances()
+    //           .forEach((editor: any) => editor.setValue(value))
+    //       }
+    //       currentValue={params.value || ""}
+    //     />
+    //   ),
+    // },
+    // {
+    //   field: "destinationAccount",
+    //   headerName: "Destination Account",
+    //   width: 200,
+    //   editable: true,
+    //   renderEditCell: (params: any) => (
+    //     <SelectAccountNameOwnerCredit
+    //       onChangeFunction={(value: any) =>
+    //         params.api
+    //           .getCellEditorInstances()
+    //           .forEach((editor: any) => editor.setValue(value))
+    //       }
+    //       currentValue={params.value || ""}
+    //     />
+    //   ),
+    // },
   ];
 
   return (
@@ -178,7 +177,7 @@ export default function PaymentTable() {
             data-testid="payment-material-table"
             columns={columns}
             rows={data}
-            autoPageSize
+            //pagination
             checkboxSelection
             getRowId={(row:any) => row.paymentId}
             sx={{
