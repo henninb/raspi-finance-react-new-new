@@ -201,13 +201,23 @@ export default function AccountSummaryTable() {
   return (
     <div>
     <h2>Account Details</h2>
-      {showSpinner ? (
+      {!showSpinner ? (
         <div data-testid="account-table">
             <IconButton 
               //onClick={handleAddRow} 
               style={{ marginLeft: 8 }}>
               <AddIcon />
             </IconButton>
+
+        <h2>`[ ${currencyFormat(
+              noNaN(totals["totals"]),
+            )} ] [ ${currencyFormat(
+              noNaN(totals["totalsCleared"]),
+            )} ]  [ ${currencyFormat(
+              noNaN(totals["totalsOutstanding"]),
+            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]`</h2>
+
+
           <DataGrid 
             columns={columns} 
             rows={data} 

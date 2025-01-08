@@ -178,7 +178,7 @@ export default function ParameterConfiguration() {
 
   return (
     <div>
-      {showSpinner ? (
+      {!showSpinner ? (
         <div>
           <h1>Configuration</h1>
           {generateTable(data)}

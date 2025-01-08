@@ -370,7 +370,7 @@ export default function PaymentTable() {
   return (
     <div>
        <h2>Payment Details</h2>
-      {showSpinner ?
+      {!showSpinner ?
       (
         <div data-testid="payment-table">
                       
@@ -381,7 +381,7 @@ export default function PaymentTable() {
             </IconButton>
           <DataGrid
             columns={columns}
-            rows={dataTest}
+            rows={data}
             pagination
             //paginationModel={{ pageSize: 40, page: 0 }}
             getRowId={(row:any) => row.paymentId}

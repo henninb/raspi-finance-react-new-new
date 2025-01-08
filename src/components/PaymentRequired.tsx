@@ -57,15 +57,13 @@ export default function PaymentRequired() {
       headerName: "moniker",
       width: 150,
     },
-
-
     {
       field: "future",
       headerName: "Future",
       width: 150,
       type: "number",
       editable: false,
-      valueFormatter: (params: any) =>
+      renderCell: (params: any) =>
         params.value?.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
@@ -78,7 +76,7 @@ export default function PaymentRequired() {
       width: 150,
       type: "number",
       editable: false,
-      valueFormatter: (params: any) =>
+      renderCell: (params: any) =>
         params.value?.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
@@ -91,7 +89,7 @@ export default function PaymentRequired() {
       width: 150,
       type: "number",
       editable: false,
-      valueFormatter: (params: any) =>
+      renderCell: (params: any) =>
         params.value?.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
@@ -103,7 +101,7 @@ export default function PaymentRequired() {
   return (
     <div>
        <h2>Payment Required Details</h2>
-      {showSpinner ?
+      {!showSpinner ?
       (
         <div data-testid="payment-required-table">
           <DataGrid

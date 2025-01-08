@@ -173,7 +173,7 @@ export default function TransferTable() {
   return (
     <div>
        <h2>Transfer Details</h2>
-      { showSpinner ? (
+      { !showSpinner ? (
         <div data-testid="transfer-table">
             <IconButton 
               //onClick={handleAddRow} 

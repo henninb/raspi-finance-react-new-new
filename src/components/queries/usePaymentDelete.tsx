@@ -37,9 +37,12 @@ export default function usePaymentDelete() {
 
       onSuccess: (_response, variables) => {
         const oldData: any = queryClient.getQueryData("payment");
-        const newData = oldData.filter(
-          (t: any) => t.tableData.id !== variables.oldRow.tableData.id,
-        );
+        const newData = oldData;
+        //TODO: fix required 1/8/2025
+        console.log("oldData: " + oldData);
+        //  = oldData.filter(
+        //   (t: any) => t.tableData.paymentId !== variables.oldRow.tableData.paymentId,
+        // );
         queryClient.setQueryData("payment", newData);
       },
     },
