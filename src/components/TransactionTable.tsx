@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Spinner from "./Spinner";
+import { useNavigate } from "react-router-dom";
+import { currencyFormat, noNaN } from "./Common";
+import SnackbarBaseline from "./SnackbarBaseline";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -13,14 +17,84 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import UpdateIcon from '@mui/icons-material/Check';
 import IconButton from '@mui/material/IconButton';
+import { useMatch, PathMatch } from "react-router-dom";
+import useFetchTransactionByAccount from "./queries/useFetchTransactionByAccount";
+import useChangeTransactionState from "./queries/useTransactionStateUpdate";
+import useTransactionUpdate from "./queries/useTransactionUpdate";
+import useTransactionDelete from "./queries/useTransactionDelete";
+import useTransactionInsert from "./queries/useTransactionInsert";
+import useFetchTotalsPerAccount from "./queries/useFetchTotalsPerAccount";
+import useReceiptImageUpdate from "./queries/useReceiptImageUpdate";
+import useFetchValidationAmount from "./queries/useFetchValidationAmount";
+import useValidationAmountInsert from "./queries/useValidationAmountInsert";
 
 export default function TransactionTable() {
+  const [loadMoveDialog, setLoadMoveDialog] = useState(false);
+  const [currentTransaction, setCurrentTransaction] = useState({});
+  const [keyPressed, setKeyPressed] = useState(false);
+  const [fileContent, setFileContent] = useState("");
+  const [message, setMessage] = useState("");
+  const [open, setOpen] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
+
+  const routeMatch: PathMatch<string> | null = useMatch("/transactions/:account");
+  let accountNameOwner = "default";
+
+  if (routeMatch?.params?.account) {
+    accountNameOwner = routeMatch.params.account;
+  } else {
+    console.log("accountNameOwner is set to the default.");
+  }
+
+  const { data, isSuccess } = useFetchTransactionByAccount(accountNameOwner);
+  const { data: totals, isSuccess: isSuccessTotals } =  useFetchTotalsPerAccount(accountNameOwner);
+  const { data: validationData, isSuccess: isSuccessValidationTotals } = useFetchValidationAmount(accountNameOwner);
+  const { mutate: updateTransactionState } = useChangeTransactionState(accountNameOwner);
+  const { mutate: updateTransaction } = useTransactionUpdate();
+  const { mutate: deleteTransaction } = useTransactionDelete();
+  const { mutate: insertReceiptImage } = useReceiptImageUpdate();
+  const { mutate: insertTransaction } = useTransactionInsert(accountNameOwner);
+  const { mutate: insertValidationAmount } = useValidationAmountInsert();
+
+  const handleSnackbarClose = () => {
+    setOpen(false);
+  };
+
+  const handleError = (error: any, moduleName: any, throwIt: any) => {
+    if (error.response) {
+      setMessage(
+        `${moduleName}: ${error.response.status} and ${JSON.stringify(
+          error.response.data,
+        )}`,
+      );
+      console.log(
+        `${moduleName}: ${error.response.status} and ${JSON.stringify(
+          error.response.data,
+        )}`,
+      );
+      setOpen(true);
+    } else {
+      setMessage(`${moduleName}: failure`);
+      console.log(`${moduleName}: failure`);
+      setOpen(true);
+      if (throwIt) {
+        throw error;
+      }
+    }
+  };
+
+  useEffect(() => {
+       if (isSuccess && isSuccessTotals && isSuccessValidationTotals ) {
+         setShowSpinner(false);
+       }
+     }, [isSuccess, isSuccessTotals]); 
+
   const columns: GridColDef[] = [
     {
       field: "transactionDate",
       headerName: "Transaction Date",
       type: "date",
-      width: 180,
+      width: 100,
       renderCell: (params) => {
         return params.value.toLocaleDateString("en-US");
       },
@@ -32,19 +106,6 @@ export default function TransactionTable() {
         return localDate;
       },
       editable: true,
-      // renderEditCell: (params: any) => (
-      //   <LocalizationProvider dateAdapter={AdapterMoment}>
-      //     <DatePicker
-      //       value={params.value || null}
-      //       onChange={(newValue: any) =>
-      //         params.api
-      //           .getCellEditorInstances()
-      //           .forEach((editor: any) => editor.setValue(newValue))
-      //       }
-      //       slots={{ textField: TextField }}
-      //     />
-      //   </LocalizationProvider>
-      // ),
     },
     {
       field: 'description',
@@ -83,11 +144,17 @@ export default function TransactionTable() {
       // ),
     },
     {
-      field: 'amount',
-      headerName: 'Amount',
-      type: 'number',
-      width: 150,
+      field: "amount",
+      headerName: "Amount",
+      type: "number",
+      width: 75,
+      renderCell: (params: any) =>
+        params.value?.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+        }),
       editable: true,
+      cellClassName: "nowrap",
     },
     {
       field: 'transactionState',
@@ -131,22 +198,22 @@ export default function TransactionTable() {
       width: 180,
       editable: true,
     },
-    {
-      field: 'receiptImage',
-      headerName: 'Image',
-      editable: false,
-      //filtering: false,
-      width: 150,
-      renderCell: (params) => (
-        <div>
-          {params.value ? (
-            <img src={params.value.thumbnail} alt="receipt" style={{ width: '50px', height: '50px' }} />
-          ) : (
-            <Button onClick={() => {/* Handle image upload or view */}}>Upload Image</Button>
-          )}
-        </div>
-      ),
-    },
+    // {
+    //   field: 'receiptImage',
+    //   headerName: 'Image',
+    //   editable: false,
+    //   //filtering: false,
+    //   width: 150,
+    //   renderCell: (params) => (
+    //     <div>
+    //       {params.value ? (
+    //         <img src={params.value.thumbnail} alt="receipt" style={{ width: '50px', height: '50px' }} />
+    //       ) : (
+    //         <Button onClick={() => {/* Handle image upload or view */}}>Upload Image</Button>
+    //       )}
+    //     </div>
+    //   ),
+    // },
     {
       field: "",
       headerName: "",
@@ -175,19 +242,48 @@ export default function TransactionTable() {
     },
   ];
 
-  const data: any[] = [];
-
   return (
-    <div style={{ height: 400, width: "100%" }}>
-      <DataGrid 
-        rows={data}
-        columns={columns} 
-        pagination
-        //paginationModel={{ pageSize: 40, page: 0 }}
-        getRowId={(row:any) => row.transactionId}
-        checkboxSelection={false}
-        rowSelection={false}
-      />
+    <div><h2>{`[${accountNameOwner}]`}</h2>
+    {/* <h2>{`[${accountNameOwner}] [ ${currencyFormat(
+              noNaN(totals["totals"]),
+            )} ] [ ${currencyFormat(
+              noNaN(totals["totalsCleared"]),
+            )} ]  [ ${currencyFormat(
+              noNaN(totals["totalsOutstanding"]),
+            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]`}</h2> */}
+      {!showSpinner ? (
+        <div data-testid="transaction-table">
+          <IconButton 
+              //onClick={handleAddRow} 
+              style={{ marginLeft: 8 }}>
+              <AddIcon />
+          </IconButton>
+
+          <DataGrid 
+            rows={data}
+            columns={columns} 
+            pagination
+            //paginationModel={{ pageSize: 40, page: 0 }}
+            getRowId={(row:any) => row.transactionId}
+            checkboxSelection={false}
+            rowSelection={false}
+          />
+
+
+          <div>
+            <SnackbarBaseline
+              message={message}
+              state={open}
+              handleSnackbarClose={handleSnackbarClose}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="centered">
+          <Spinner />
+        </div>
+      )}
     </div>
   );
+
 };
