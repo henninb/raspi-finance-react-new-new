@@ -16,6 +16,7 @@ import SelectReoccurringType from "./SelectReoccurringType";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import UpdateIcon from '@mui/icons-material/Check';
+import AttachMoneyRounded from '@mui/icons-material/AttachMoneyRounded'
 import IconButton from '@mui/material/IconButton';
 import { useMatch, PathMatch } from "react-router-dom";
 import useFetchTransactionByAccount from "./queries/useFetchTransactionByAccount";
@@ -28,6 +29,8 @@ import useReceiptImageUpdate from "./queries/useReceiptImageUpdate";
 import useFetchValidationAmount from "./queries/useFetchValidationAmount";
 import useValidationAmountInsert from "./queries/useValidationAmountInsert";
 import Transaction from "./model/Transaction";
+import {TransactionState} from "./model/TransactionState";
+import ValidationAmount from "./model/ValidationAmount";
 
 export default function TransactionTable() {
   const [loadMoveDialog, setLoadMoveDialog] = useState(false);
@@ -37,7 +40,8 @@ export default function TransactionTable() {
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
-  const [state, setState] = useState('outstanding');
+  //const [selectedState, setSelectedState] = useState('outstanding');
+  //const [state, setState] = useState('outstanding');
 
   const routeMatch: PathMatch<string> | null = useMatch("/transactions/:account");
   let accountNameOwner = "default";
@@ -49,83 +53,6 @@ export default function TransactionTable() {
   }
 
   const transactionStates = ['outstanding', 'future', 'cleared'];
-
-  const dataTest = [    {
-    "transactionId": 10544,
-    "guid": "299b36b1-a49f-43bc-aaa5-ba78352f716a",
-    "accountId": 1029,
-    "accountType": "credit",
-    "transactionType": "undefined",
-    "accountNameOwner": "barclay-cash_brian",
-    "transactionDate": "2017-09-17",
-    "description": "balance adjustment",
-    "category": "none",
-    "amount": -0.99,
-    "transactionState": "cleared",
-    "activeStatus": true,
-    "reoccurringType": "onetime"
-},
-{
-    "transactionId": 10543,
-    "guid": "55dd8ccb-b51c-4c93-907e-95ed1d20705f",
-    "accountId": 1029,
-    "accountType": "credit",
-    "transactionType": "expense",
-    "accountNameOwner": "barclay-cash_brian",
-    "transactionDate": "2017-08-18",
-    "description": "amazon.com",
-    "category": "online",
-    "amount": 0.99,
-    "transactionState": "cleared",
-    "activeStatus": true,
-    "reoccurringType": "onetime",
-    "notes": "egiftcard"
-},
-{
-    "transactionId": 10542,
-    "guid": "499cee31-ec4c-4f8a-b5b5-35ea9c9df9f4",
-    "accountId": 1029,
-    "accountType": "credit",
-    "transactionType": "undefined",
-    "accountNameOwner": "barclay-cash_brian",
-    "transactionDate": "2017-08-17",
-    "description": "balance adjustment",
-    "category": "none",
-    "amount": -0.99,
-    "transactionState": "cleared",
-    "activeStatus": true,
-    "reoccurringType": "onetime"
-},
-{
-    "transactionId": 10541,
-    "guid": "6128e4be-932d-4da3-af3b-3c25e76a9de9",
-    "accountId": 1029,
-    "accountType": "credit",
-    "transactionType": "expense",
-    "accountNameOwner": "barclay-cash_brian",
-    "transactionDate": "2017-07-18",
-    "description": "amazon.com",
-    "category": "online",
-    "amount": 0.99,
-    "transactionState": "cleared",
-    "activeStatus": true,
-    "reoccurringType": "onetime"
-},
-{
-    "transactionId": 10540,
-    "guid": "798e8a7f-f615-46b1-aeba-b0b8f74e5d10",
-    "accountId": 1029,
-    "accountType": "credit",
-    "transactionType": "undefined",
-    "accountNameOwner": "barclay-cash_brian",
-    "transactionDate": "2017-07-17",
-    "description": "balance adjustment",
-    "category": "none",
-    "amount": -0.99,
-    "transactionState": "cleared",
-    "activeStatus": true,
-    "reoccurringType": "onetime"
-}];
 
   const { data, isSuccess } = useFetchTransactionByAccount(accountNameOwner);
   const { data: totals, isSuccess: isSuccessTotals } =  useFetchTotalsPerAccount(accountNameOwner);
@@ -141,9 +68,35 @@ export default function TransactionTable() {
     setOpen(false);
   };
 
-    const handleDeleteRow = async (transaction: Transaction) => {
-      await deleteTransaction({ oldRow: transaction });
+  const handleInsertNewValidationData = async (
+    accountNameOwner: string,
+    transactionState: TransactionState,
+  ) => {
+    console.log(accountNameOwner);
+
+    const payload: ValidationAmount = {
+      activeStatus: true,
+      amount: totals.totalsCleared,
+      transactionState: transactionState,
+      validationDate: new Date(),
     };
+
+    await insertValidationAmount({
+      accountNameOwner: accountNameOwner,
+      payload: payload,
+    });
+  };
+
+  const handleDeleteRow = async (transaction: Transaction) => {
+    await deleteTransaction({ oldRow: transaction });
+  };
+
+  const handlerToUpdateTransactionState = async(guid: string, transactionState: string) => {
+    await updateTransactionState({
+      guid: guid,
+      transactionState: transactionState,
+    });
+  }
 
   const handleError = (error: any, moduleName: any, throwIt: any) => {
     if (error.response) {
@@ -202,12 +155,12 @@ export default function TransactionTable() {
           {params.value}
         </div>
       ),
-      renderEditCell: (params: any) => (
-        <TextField
-          value={params.value || ''}
-          onChange={(e: any) => params.api.getCellEditorInstances().forEach((editor: any) => editor.setValue(e.target.value))}
-        />
-      ),
+      // renderEditCell: (params: any) => (
+      //   <TextField
+      //     value={params.value || ''}
+      //     onChange={(e: any) => params.api.getCellEditorInstances().forEach((editor: any) => editor.setValue(e.target.value))}
+      //   />
+      // ),
     },
     {
       field: 'category',
@@ -234,30 +187,38 @@ export default function TransactionTable() {
       editable: true,
       cellClassName: "nowrap",
     },
-
     {
       field: 'transactionState',
-      headerName: 'State',
-      width: 250,
+      headerName: 'transactionState',
+      width: 275,
+      editable: true,
       renderCell: (params: any) => {
-        setState(params.value || 'outstanding')
-  
-        const handleStateChange = (newState: any) => {
-          setState(newState);
-          // Optionally update the API if required:
-          // params.api.updateRows([{ id: params.id, transactionState: newState }]);
+        const handleStateChange = (newState: string) => {
+          const transactionGuid = params.row.guid; 
+          console.log("parms: " + params.row.guid );
+          handlerToUpdateTransactionState(transactionGuid, newState)
+          // Optionally update the backend or DataGrid API here
+          console.log(`State changed to: ${newState}`);
         };
-  
+    
         return (
           <Box>
             {transactionStates.map((option) => (
               <Button
                 key={option}
-                variant={state === option ? 'contained' : 'outlined'}
-                //color={state === option ? 'primary' : 'default'}
+                variant={params.value === option ? 'contained' : 'outlined'}
                 onClick={() => handleStateChange(option)}
                 size="small"
-                sx={{ marginRight: 1 }}
+                sx={{ 
+                  marginRight: 1,
+                  color: params.value === option ? 'white' : 'primary.main',
+                  backgroundColor: params.value === option ? 'primary.main' : 'transparent',
+                  borderColor: params.value === option ? 'transparent' : 'primary.main', // Border color matches text
+              '&:hover': {
+                backgroundColor: params.value === option ? 'primary.dark' : 'primary.light',
+                color: params.value === option ? 'white' : 'primary.main',
+              },
+                }}
               >
                 {option}
               </Button>
@@ -265,25 +226,6 @@ export default function TransactionTable() {
           </Box>
         );
       },
-      renderEditCell: (params: any) => (
-        <Box>
-          {transactionStates.map((option) => (
-            <Button
-              key={option}
-              variant={params.value === option ? 'contained' : 'outlined'}
-              //color={params.value === option ? 'primary' : 'default'}
-              onClick={() => {
-                // Update the value in your grid
-                params.api.updateRows([{ id: params.id, transactionState: option }]);
-              }}
-              size="small"
-              sx={{ marginRight: 1 }}
-            >
-              {option}
-            </Button>
-          ))}
-        </Box>
-      ),
     },
     {
       field: 'transactionType',
@@ -379,9 +321,10 @@ export default function TransactionTable() {
           </IconButton>
 
           <Button
-                      onClick={() =>
+                      onClick={() => {
                         console.log('insertNewValidationData(accountNameOwner, "cleared")')
-                        //insertNewValidationData(accountNameOwner, "cleared")
+                        handleInsertNewValidationData(accountNameOwner, "cleared")
+                        }
                       }
                     >
                       {validationData.amount

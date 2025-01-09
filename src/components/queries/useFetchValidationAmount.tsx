@@ -2,22 +2,29 @@ import axios, { AxiosError } from "axios";
 import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
 
+const dataTest = [{}]
+
 const fetchValidationAmountData = async (
   accountNameOwner: string,
 ): Promise<any> => {
-  const response = await axios.get(
-    `/api/validation/amount/select/${accountNameOwner}/cleared`,
-    {
-      timeout: 0,
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: basicAuth(),
+  try {
+    const response = await axios.get(
+      `/api/validation/amount/select/${accountNameOwner}/cleared`,
+      {
+        timeout: 0,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: basicAuth(),
+        },
       },
-    },
-  );
-  //console.debug(JSON.stringify(response.data));
-  return response.data;
+    );
+    //console.debug(JSON.stringify(response.data));
+    return response.data;
+  }  catch(error) {
+    console.error("Error fetching validationAmount data:", error);
+    return dataTest
+  }
 };
 
 export default function useFetchValidationAmount(accountNameOwner: string) {

@@ -20,7 +20,10 @@ import { basicAuth } from "../Common";
 //   return data.descriptions;
 // };
 
+const dataTest = [{}]
+
 const fetchDescriptionData = async (): Promise<any> => {
+  try {
   const response = await axios.get("/api/description/select/all", {
     timeout: 0,
     headers: {
@@ -31,6 +34,10 @@ const fetchDescriptionData = async (): Promise<any> => {
   });
   //console.debug(JSON.stringify(response.data));
   return response.data;
+} catch(error) {
+  console.error("Error fetching description data:", error);
+  return dataTest;
+}
 };
 
 // export default function useFetchDescription() {

@@ -4,16 +4,20 @@ import { useMutation, useQueryClient } from "react-query";
 import Transfer from "../model/Transfer";
 
 const deleteTransfer = async (payload: Transfer): Promise<string> => {
-  const endpoint = "/api/transfer/delete/" + payload.transferId;
+  try {
+    const endpoint = "/api/transfer/delete/" + payload.transferId;
 
-  const response = await axios.delete(endpoint, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  return response.data;
+    const response = await axios.delete(endpoint, {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    return response.data;
+  } catch(error) {
+    return JSON.stringify(payload);
+  }
 };
 
 export default function useTransferDelete() {

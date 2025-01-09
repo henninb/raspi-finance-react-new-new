@@ -5,4 +5,6 @@ export default interface Transfer {
   transactionDate: Date;
   amount: number;
   activeStatus: boolean;
+  dateAdded?: Date;
+  dateUpdated?: Date;
 }

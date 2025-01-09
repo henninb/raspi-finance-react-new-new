@@ -5,16 +5,20 @@ import { getAccountKey } from "./KeyFile";
 import Transaction from "../model/Transaction";
 
 const deleteTransaction = async (payload: Transaction): Promise<any> => {
-  const endpoint = "/api/transaction/delete/" + payload.guid;
+  try {
+    const endpoint = "/api/transaction/delete/" + payload.guid;
 
-  const response = await axios.delete(endpoint, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  return response.data;
+    const response = await axios.delete(endpoint, {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    return response.data;
+  } catch(error) {
+    return JSON.stringify(payload)
+  }
 };
 
 export default function useTransactionDelete() {

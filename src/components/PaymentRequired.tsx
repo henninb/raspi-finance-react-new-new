@@ -6,15 +6,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import useFetchPaymentRequired from "./queries/useFetchPaymentRequired";
-
-interface PaymentRequiredData {
-  accountNameOwner: string;
-  accountType: string;
-  moniker: string;
-  future: number;
-  outstanding: number;
-  cleared: number;
-}
+//import PaymentRequired from "./model/PaymentRequired";
 
 export default function PaymentRequired() {
   const [showSpinner, setShowSpinner] = useState(true);

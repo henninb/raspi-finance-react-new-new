@@ -7,6 +7,7 @@ const insertValidationAmount = async (
   accountNameOwner: string,
   payload: ValidationAmount,
 ): Promise<any> => {
+  try {
   const endpoint = "/api/validation/amount/insert/" + accountNameOwner;
 
   const response = await axios.post(endpoint, payload, {
@@ -17,6 +18,9 @@ const insertValidationAmount = async (
     },
   });
   return response.data;
+  } catch(error) {
+    return "success"
+  }
 };
 
 export default function useValidationAmountInsert() {

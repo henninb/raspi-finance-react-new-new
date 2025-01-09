@@ -2,20 +2,27 @@ import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
 import axios, { AxiosError } from "axios";
 
+const dataTest = [{}]
+
 const fetchTotalsPerAccount = async (accountNameOwner: any): Promise<any> => {
-  const response = await axios.get(
-    "/api/transaction/account/totals/" + accountNameOwner,
-    {
-      timeout: 0,
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: basicAuth(),
+  try {
+    const response = await axios.get(
+      "/api/transaction/account/totals/" + accountNameOwner,
+      {
+        timeout: 0,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: basicAuth(),
+        },
       },
-    },
-  );
-  //console.debug(JSON.stringify(response.data));
-  return response.data;
+    );
+    //console.debug(JSON.stringify(response.data));
+    return response.data;
+  } catch(error) {
+    console.error("Error fetching totalsPerPayment data:", error);
+    return dataTest
+  }
 };
 
 export default function useFetchTotalsPerAccount(accountNameOwner: any) {

@@ -3,4 +3,6 @@ export default interface Parameter {
   parameterName: string;
   parameterValue: string;
   activeStatus: boolean;
+  dateAdded?: Date;
+  dateUpdated?: Date;
 }

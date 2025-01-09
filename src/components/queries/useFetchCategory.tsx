@@ -20,17 +20,26 @@ import { basicAuth } from "../Common";
 //   return data.categories;
 // };
 
+const dataTest = [{}]
+
 const fetchCategoryData = async (): Promise<any> => {
-  const response = await axios.get("/api/category/select/active", {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  //console.debug(JSON.stringify(response.data));
-  return response.data;
+  try {
+    const response = await axios.get("/api/category/select/active", {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    // Uncomment the line below for debugging
+    // console.debug(JSON.stringify(response.data));
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching category data:", error);
+    
+    return dataTest;
+  }
 };
 
 // export default function useFetchCategory() {

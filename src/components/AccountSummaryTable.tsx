@@ -122,24 +122,16 @@ export default function AccountSummaryTable() {
       sortable: false,
       width: 120,
       renderCell: (params) => (
-        <>
+        <div>
         <IconButton       
           onClick={() => {
-            //handleDeleteRow(params.row)
-          }
-          }
-        >
-          <UpdateIcon />
-        </IconButton>
-        <IconButton       
-          onClick={() => {
-            //handleDeleteRow(params.row)
+            console.log("handleDeleteRow(params.row)");
           }
           }
         >
           <DeleteIcon />
         </IconButton>
-        </>
+        </div>
       ),
     },
   ];

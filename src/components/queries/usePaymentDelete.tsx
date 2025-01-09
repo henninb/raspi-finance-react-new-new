@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "react-query";
 import Payment from "../model/Payment";
 
 const deletePayment = async (payload: Payment): Promise<string> => {
+  try {
   const endpoint = "/api/payment/delete/" + payload?.paymentId;
 
   const response = await axios.delete(endpoint, {
@@ -14,6 +15,9 @@ const deletePayment = async (payload: Payment): Promise<string> => {
     },
   });
   return response.data;
+  } catch(error) {
+    return JSON.stringify(payload);
+  }
 };
 
 export default function usePaymentDelete() {
