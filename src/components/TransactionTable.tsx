@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
+import { Button, Box} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
-import { currencyFormat, noNaN } from "./Common";
+import { currencyFormat, epochToDate, noNaN } from "./Common";
 import SnackbarBaseline from "./SnackbarBaseline";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -36,6 +36,7 @@ export default function TransactionTable() {
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
+  const [state, setState] = useState('outstanding');
 
   const routeMatch: PathMatch<string> | null = useMatch("/transactions/:account");
   let accountNameOwner = "default";
@@ -45,6 +46,85 @@ export default function TransactionTable() {
   } else {
     console.log("accountNameOwner is set to the default.");
   }
+
+  const transactionStates = ['outstanding', 'future', 'cleared'];
+
+  const dataTest = [    {
+    "transactionId": 10544,
+    "guid": "299b36b1-a49f-43bc-aaa5-ba78352f716a",
+    "accountId": 1029,
+    "accountType": "credit",
+    "transactionType": "undefined",
+    "accountNameOwner": "barclay-cash_brian",
+    "transactionDate": "2017-09-17",
+    "description": "balance adjustment",
+    "category": "none",
+    "amount": -0.99,
+    "transactionState": "cleared",
+    "activeStatus": true,
+    "reoccurringType": "onetime"
+},
+{
+    "transactionId": 10543,
+    "guid": "55dd8ccb-b51c-4c93-907e-95ed1d20705f",
+    "accountId": 1029,
+    "accountType": "credit",
+    "transactionType": "expense",
+    "accountNameOwner": "barclay-cash_brian",
+    "transactionDate": "2017-08-18",
+    "description": "amazon.com",
+    "category": "online",
+    "amount": 0.99,
+    "transactionState": "cleared",
+    "activeStatus": true,
+    "reoccurringType": "onetime",
+    "notes": "egiftcard"
+},
+{
+    "transactionId": 10542,
+    "guid": "499cee31-ec4c-4f8a-b5b5-35ea9c9df9f4",
+    "accountId": 1029,
+    "accountType": "credit",
+    "transactionType": "undefined",
+    "accountNameOwner": "barclay-cash_brian",
+    "transactionDate": "2017-08-17",
+    "description": "balance adjustment",
+    "category": "none",
+    "amount": -0.99,
+    "transactionState": "cleared",
+    "activeStatus": true,
+    "reoccurringType": "onetime"
+},
+{
+    "transactionId": 10541,
+    "guid": "6128e4be-932d-4da3-af3b-3c25e76a9de9",
+    "accountId": 1029,
+    "accountType": "credit",
+    "transactionType": "expense",
+    "accountNameOwner": "barclay-cash_brian",
+    "transactionDate": "2017-07-18",
+    "description": "amazon.com",
+    "category": "online",
+    "amount": 0.99,
+    "transactionState": "cleared",
+    "activeStatus": true,
+    "reoccurringType": "onetime"
+},
+{
+    "transactionId": 10540,
+    "guid": "798e8a7f-f615-46b1-aeba-b0b8f74e5d10",
+    "accountId": 1029,
+    "accountType": "credit",
+    "transactionType": "undefined",
+    "accountNameOwner": "barclay-cash_brian",
+    "transactionDate": "2017-07-17",
+    "description": "balance adjustment",
+    "category": "none",
+    "amount": -0.99,
+    "transactionState": "cleared",
+    "activeStatus": true,
+    "reoccurringType": "onetime"
+}];
 
   const { data, isSuccess } = useFetchTransactionByAccount(accountNameOwner);
   const { data: totals, isSuccess: isSuccessTotals } =  useFetchTotalsPerAccount(accountNameOwner);
@@ -115,13 +195,6 @@ export default function TransactionTable() {
       renderCell: (params) => (
         <div>
           {params.value}
-          <Button
-            onClick={() => {
-              // Your logic here to handle editing
-            }}
-          >
-            Edit
-          </Button>
         </div>
       ),
       renderEditCell: (params: any) => (
@@ -156,17 +229,56 @@ export default function TransactionTable() {
       editable: true,
       cellClassName: "nowrap",
     },
+
     {
       field: 'transactionState',
       headerName: 'State',
-      width: 180,
-      renderCell: (params) => <div>{params.value}</div>,
-      // renderEditCell: (params: any) => (
-      //   <SelectTransactionState
-      //     currentValue={params.value || 'outstanding'}
-      //     onChange={(newValue: any) => params.api.getCellEditorInstances().forEach((editor: any) => editor.setValue(newValue))}
-      //   />
-      // ),
+      width: 250,
+      renderCell: (params: any) => {
+        setState(params.value || 'outstanding')
+  
+        const handleStateChange = (newState: any) => {
+          setState(newState);
+          // Optionally update the API if required:
+          // params.api.updateRows([{ id: params.id, transactionState: newState }]);
+        };
+  
+        return (
+          <Box>
+            {transactionStates.map((option) => (
+              <Button
+                key={option}
+                variant={state === option ? 'contained' : 'outlined'}
+                //color={state === option ? 'primary' : 'default'}
+                onClick={() => handleStateChange(option)}
+                size="small"
+                sx={{ marginRight: 1 }}
+              >
+                {option}
+              </Button>
+            ))}
+          </Box>
+        );
+      },
+      renderEditCell: (params: any) => (
+        <Box>
+          {transactionStates.map((option) => (
+            <Button
+              key={option}
+              variant={params.value === option ? 'contained' : 'outlined'}
+              //color={params.value === option ? 'primary' : 'default'}
+              onClick={() => {
+                // Update the value in your grid
+                params.api.updateRows([{ id: params.id, transactionState: option }]);
+              }}
+              size="small"
+              sx={{ marginRight: 1 }}
+            >
+              {option}
+            </Button>
+          ))}
+        </Box>
+      ),
     },
     {
       field: 'transactionType',
@@ -244,20 +356,42 @@ export default function TransactionTable() {
 
   return (
     <div><h2>{`[${accountNameOwner}]`}</h2>
-    {/* <h2>{`[${accountNameOwner}] [ ${currencyFormat(
+      {!showSpinner ? (
+        
+        <div data-testid="transaction-table">
+<h2>{`[ ${currencyFormat(
               noNaN(totals["totals"]),
             )} ] [ ${currencyFormat(
               noNaN(totals["totalsCleared"]),
             )} ]  [ ${currencyFormat(
               noNaN(totals["totalsOutstanding"]),
-            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]`}</h2> */}
-      {!showSpinner ? (
-        <div data-testid="transaction-table">
+            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]`}</h2> 
+
           <IconButton 
               //onClick={handleAddRow} 
               style={{ marginLeft: 8 }}>
               <AddIcon />
           </IconButton>
+
+          <Button
+                      onClick={() =>
+                        console.log('insertNewValidationData(accountNameOwner, "cleared")')
+                        //insertNewValidationData(accountNameOwner, "cleared")
+                      }
+                    >
+                      {validationData.amount
+                        ? validationData.amount.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })
+                        : "$0.00"}{" "}
+                      {" - "}{" "}
+                      {validationData.validationDate
+                        ? epochToDate(
+                            validationData.validationDate,
+                          ).toLocaleString()
+                        : "1970-01-01T00:00:00:000Z"}
+                    </Button>
 
           <DataGrid 
             rows={data}
@@ -285,5 +419,4 @@ export default function TransactionTable() {
       )}
     </div>
   );
-
 };

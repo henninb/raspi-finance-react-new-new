@@ -132,13 +132,6 @@ export default function TransferTable() {
           style: "currency",
           currency: "USD",
         }),
-      // valueFormatter: (params: any) => {
-      //     console.log("param-value:" + params.value);
-      //     params.value?.toLocaleString("en-US", {
-      //         style: "currency",
-      //         currency: "USD",
-      //       })
-      // },
       editable: true,
       cellClassName: "nowrap",
     },
