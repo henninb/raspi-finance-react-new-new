@@ -28,7 +28,7 @@ export default function PaymentTable() {
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
-  const [rows, setRows] = useState([]);
+  //const [rows, setRows] = useState([]);
 
   const [newRow, setNewRow] = useState({
     paymentId: Math.random(), // Generate unique ID
@@ -220,21 +220,8 @@ export default function PaymentTable() {
   };
 
   const handleDeleteRow = async (payment: Payment) => {
-    console.log("payment: " + JSON.stringify(payment))
-    await deletePayment(
-      { oldRow: payment },
-      {
-        onSuccess: () => {
-          setRows((prevRows: any) => prevRows.filter((row: any) => row.paymentId !== payment.paymentId));
-          setMessage("Row deleted successfully.");
-          setOpen(true);
-        },
-        onError: (error) => {
-          setMessage(`Error deleting row: ${error.message}`);
-          setOpen(true);
-        },
-      }
-    );
+    //console.log("payment: " + JSON.stringify(payment))
+    await deletePayment({ oldRow: payment });
   };
 
   const handleError = (error: any, moduleName: string, throwIt: any) => {
@@ -344,16 +331,7 @@ export default function PaymentTable() {
       sortable: false,
       width: 120,
       renderCell: (params) => (
-        <>
-        <IconButton       
-          onClick={() => {
-            handleDeleteRow(params.row)
-
-          }
-          }
-        >
-          <UpdateIcon />
-        </IconButton>
+        <div>
         <IconButton       
           onClick={() => {
             handleDeleteRow(params.row)
@@ -362,7 +340,7 @@ export default function PaymentTable() {
         >
           <DeleteIcon />
         </IconButton>
-        </>
+        </div>
       ),
     },
   ];
@@ -389,6 +367,7 @@ export default function PaymentTable() {
             //hideFooterPagination={true}
             checkboxSelection={false}  // Disabling row selection (checkboxes)
             rowSelection={false}
+            //experimentalFeatures={{ newEditingApi: true }}
             // sx={{
             //   "& .MuiDataGrid-columnHeaders": {
             //     backgroundColor: "#9965f4",

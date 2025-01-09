@@ -46,7 +46,7 @@ export default function useReceiptImageUpdate() {
         );
 
         const dataUpdate = [...oldData];
-        const index = variables.oldRow.tableData.id;
+        const index = variables.oldRow.receiptId;
         dataUpdate[index] = variables.oldRow;
         dataUpdate[index].receiptImage = variables.fileContent;
         const newData = [...dataUpdate];

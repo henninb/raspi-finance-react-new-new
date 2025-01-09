@@ -38,7 +38,7 @@ export default function useTransferDelete() {
       onSuccess: (_response, variables) => {
         const oldData: any = queryClient.getQueryData("transfer");
         const newData = oldData.filter(
-          (t: any) => t.tableData.id !== variables.oldRow.tableData.id,
+          (t: any) => t.transferId !== variables.oldRow.transferId,
         );
         queryClient.setQueryData("transfer", newData);
       },

@@ -36,12 +36,13 @@ export default function useTransactionDelete() {
         );
       },
 
+      //might have a different key?
       onSuccess: (response, variables) => {
         const oldData: any = queryClient.getQueryData(
           getAccountKey(variables.oldRow.accountNameOwner),
         );
         const newData = oldData.filter(
-          (t: any) => t.tableData.id !== variables.oldRow.tableData.id,
+          (t: any) => t.transactionId !== variables.oldRow.transactionId,
         );
         queryClient.setQueryData(
           getAccountKey(variables.oldRow.accountNameOwner),

@@ -26,13 +26,40 @@ export default function TransferTable() {
   const { mutate: insertTransfer } = useTransferInsert();
   const { mutate: deleteTransfer } = useTransferDelete();
 
-    useEffect(() => {
-      if (isSuccess) {
-        setShowSpinner(false);
-      }
-    }, [isSuccess]);
+  useEffect(() => {
+    if (isSuccess) {
+      setShowSpinner(false);
+    }
+  }, [isSuccess]);
+
+  const dataTest = [
+    {
+        "transferId": 9,
+        "sourceAccount": "barclays-savings_brian",
+        "destinationAccount": "wellsfargo-savings_kari",
+        "transactionDate": "2025-01-04",
+        "amount": 3.00,
+        "guidSource": "00a8a750-cc3d-4c24-9263-c85af59cab64",
+        "guidDestination": "00a8a750-cc3d-4c24-9263-c85af59cab64",
+        "activeStatus": true
+    },
+    {
+        "transferId": 10,
+        "sourceAccount": "barclays-savings_brian",
+        "destinationAccount": "wellsfargo-savings_kari",
+        "transactionDate": "2025-01-04",
+        "amount": 2.00,
+        "guidSource": "00a8a750-cc3d-4c24-9263-c85af59cab64",
+        "guidDestination": "00a8a750-cc3d-4c24-9263-c85af59cab64",
+        "activeStatus": true
+    }
+  ];
 
   const handleSnackbarClose = () => setOpen(false);
+
+    const handleDeleteRow = async (transfer: Transfer) => {
+      await deleteTransfer({ oldRow: transfer });
+    };
 
   const handleError = (error: any, moduleName: string, throwIt: boolean) => {
     const errorMsg =
@@ -141,24 +168,16 @@ export default function TransferTable() {
       sortable: false,
       width: 120,
       renderCell: (params) => (
-        <>
+        <div>
         <IconButton       
           onClick={() => {
-            //handleDeleteRow(params.row)
-          }
-          }
-        >
-          <UpdateIcon />
-        </IconButton>
-        <IconButton       
-          onClick={() => {
-            //handleDeleteRow(params.row)
+            handleDeleteRow(params.row)
           }
           }
         >
           <DeleteIcon />
         </IconButton>
-        </>
+        </div>
       ),
     },
   ];

@@ -58,7 +58,7 @@ export default function useTransactionUpdate() {
           variables.newRow.accountNameOwner
         ) {
           const dataUpdate = [...oldData];
-          const index = variables.oldRow.tableData.id;
+          const index = variables.oldRow.transferId;
           dataUpdate[index] = variables.newRow;
           newData = [...dataUpdate];
           //TODO: update accountTotals if amounts are different
@@ -98,7 +98,7 @@ export default function useTransactionUpdate() {
           }
         } else {
           const dataDelete = [...oldData];
-          const index = variables.oldRow.tableData.id;
+          const index = variables.oldRow.transferId;
           dataDelete.splice(index, 1);
           newData = [...dataDelete];
           //TODO: add to other accountNameOwner list

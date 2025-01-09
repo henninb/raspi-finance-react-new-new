@@ -26,6 +26,41 @@ export default function SelectAccounts() {
     }
   };
 
+
+  const dataTest = [    {
+    "accountId": 1057,
+    "accountNameOwner": "amazon_brian",
+    "accountType": "debit",
+    "activeStatus": true,
+    "moniker": "0000",
+    "outstanding": 0.00,
+    "future": 25.45,
+    "cleared": -25.45,
+    "dateClosed": "1969-12-31T18:00:00.000-06:00"
+},
+{
+    "accountId": 1001,
+    "accountNameOwner": "amazon-store_brian",
+    "accountType": "credit",
+    "activeStatus": true,
+    "moniker": "0000",
+    "outstanding": 0.00,
+    "future": 0.00,
+    "cleared": 0.00,
+    "dateClosed": "1970-01-01T00:00:00.000-06:00"
+},
+{
+    "accountId": 1023,
+    "accountNameOwner": "amex_brian",
+    "accountType": "credit",
+    "activeStatus": true,
+    "moniker": "0000",
+    "outstanding": -75.25,
+    "future": 0.00,
+    "cleared": 135.25,
+    "dateClosed": "1970-01-01T00:00:00.000-06:00"
+},]
+
   useEffect(() => {
     if (isSuccess && Array.isArray(data)) {
       const optionList = data

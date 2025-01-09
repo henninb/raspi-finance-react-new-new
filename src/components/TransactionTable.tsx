@@ -27,6 +27,7 @@ import useFetchTotalsPerAccount from "./queries/useFetchTotalsPerAccount";
 import useReceiptImageUpdate from "./queries/useReceiptImageUpdate";
 import useFetchValidationAmount from "./queries/useFetchValidationAmount";
 import useValidationAmountInsert from "./queries/useValidationAmountInsert";
+import Transaction from "./model/Transaction";
 
 export default function TransactionTable() {
   const [loadMoveDialog, setLoadMoveDialog] = useState(false);
@@ -139,6 +140,10 @@ export default function TransactionTable() {
   const handleSnackbarClose = () => {
     setOpen(false);
   };
+
+    const handleDeleteRow = async (transaction: Transaction) => {
+      await deleteTransaction({ oldRow: transaction });
+    };
 
   const handleError = (error: any, moduleName: any, throwIt: any) => {
     if (error.response) {
@@ -335,7 +340,7 @@ export default function TransactionTable() {
         <>
         <IconButton       
           onClick={() => {
-            //handleDeleteRow(params.row)
+            //handleUpdateRow(params.row)
           }
           }
         >
@@ -343,7 +348,7 @@ export default function TransactionTable() {
         </IconButton>
         <IconButton       
           onClick={() => {
-            //handleDeleteRow(params.row)
+            handleDeleteRow(params.row)
           }
           }
         >
