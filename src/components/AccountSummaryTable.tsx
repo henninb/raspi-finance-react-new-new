@@ -202,13 +202,13 @@ export default function AccountSummaryTable() {
               <AddIcon />
             </IconButton>
 
-        <h2>`[ ${currencyFormat(
+        <h2>[ ${currencyFormat(
               noNaN(totals["totals"]),
             )} ] [ ${currencyFormat(
               noNaN(totals["totalsCleared"]),
             )} ]  [ ${currencyFormat(
               noNaN(totals["totalsOutstanding"]),
-            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]`</h2>
+            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]</h2>
 
 
           <DataGrid 

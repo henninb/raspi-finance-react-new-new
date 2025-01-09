@@ -2,7 +2,14 @@ import axios, { AxiosError } from "axios";
 import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
 
-const dataTest = [{}]
+const dataTest = [{
+  "validationId": 2085,
+  "accountId": 1023,
+  "validationDate": 1736459500288,
+  "activeStatus": true,
+  "transactionState": "cleared",
+  "amount": 60.00
+}]
 
 const fetchValidationAmountData = async (
   accountNameOwner: string,

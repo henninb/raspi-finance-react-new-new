@@ -2,7 +2,12 @@ import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
 import axios, { AxiosError } from "axios";
 
-const dataTest = [{}]
+const dataTest = [{
+  "totalsFuture": "-2055.70",
+  "totalsCleared": "152877.53",
+  "totals": "152326.56",
+  "totalsOutstanding": "1505.73"
+}]
 
 const fetchTotals = async (): Promise<any> => {
   try {

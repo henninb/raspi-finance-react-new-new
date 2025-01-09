@@ -306,13 +306,20 @@ export default function TransactionTable() {
       {!showSpinner ? (
         
         <div data-testid="transaction-table">
-<h2>{`[ ${currencyFormat(
+          <h2>{`[ ${currencyFormat(
+  noNaN(totals?.["totals"] ?? 0),
+)} ] [ ${currencyFormat(
+  noNaN(totals?.["totalsCleared"] ?? 0),
+)} ]  [ ${currencyFormat(
+  noNaN(totals?.["totalsOutstanding"] ?? 0),
+)} ] [ ${currencyFormat(noNaN(totals?.["totalsFuture"] ?? 0))} ]`}</h2>
+{/* <h2>{`[ ${currencyFormat(
               noNaN(totals["totals"]),
             )} ] [ ${currencyFormat(
               noNaN(totals["totalsCleared"]),
             )} ]  [ ${currencyFormat(
               noNaN(totals["totalsOutstanding"]),
-            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]`}</h2> 
+            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]`}</h2>  */}
 
           <IconButton 
               //onClick={handleAddRow} 
@@ -327,16 +334,16 @@ export default function TransactionTable() {
                         }
                       }
                     >
-                      {validationData.amount
-                        ? validationData.amount.toLocaleString("en-US", {
+                      {validationData?.amount
+                        ? validationData?.amount.toLocaleString("en-US", {
                             style: "currency",
                             currency: "USD",
                           })
                         : "$0.00"}{" "}
                       {" - "}{" "}
-                      {validationData.validationDate
+                      {validationData?.validationDate
                         ? epochToDate(
-                            validationData.validationDate,
+                            validationData?.validationDate,
                           ).toLocaleString()
                         : "1970-01-01T00:00:00:000Z"}
                     </Button>
