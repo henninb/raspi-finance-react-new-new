@@ -16,11 +16,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import UpdateIcon from '@mui/icons-material/Check';
 import IconButton from '@mui/material/IconButton';
+import { Modal } from "@mui/material";
+import {Box} from "@mui/material";
+import {Button} from "@mui/material";
 
 export default function TransferTable() {
   const [message, setMessage] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [showSpinner, setShowSpinner] = useState(true);
+  const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
+  const [transferData, setTransferData] = useState<Transfer | null>(null); // State to store the data being edited
+
 
   const { data, isSuccess } = useFetchTransfer();
   const { mutate: insertTransfer } = useTransferInsert();
@@ -31,29 +37,6 @@ export default function TransferTable() {
       setShowSpinner(false);
     }
   }, [isSuccess]);
-
-  const dataTest = [
-    {
-        "transferId": 9,
-        "sourceAccount": "barclays-savings_brian",
-        "destinationAccount": "wellsfargo-savings_kari",
-        "transactionDate": "2025-01-04",
-        "amount": 3.00,
-        "guidSource": "00a8a750-cc3d-4c24-9263-c85af59cab64",
-        "guidDestination": "00a8a750-cc3d-4c24-9263-c85af59cab64",
-        "activeStatus": true
-    },
-    {
-        "transferId": 10,
-        "sourceAccount": "barclays-savings_brian",
-        "destinationAccount": "wellsfargo-savings_kari",
-        "transactionDate": "2025-01-04",
-        "amount": 2.00,
-        "guidSource": "00a8a750-cc3d-4c24-9263-c85af59cab64",
-        "guidDestination": "00a8a750-cc3d-4c24-9263-c85af59cab64",
-        "activeStatus": true
-    }
-  ];
 
   const handleSnackbarClose = () => setOpen(false);
 
@@ -103,19 +86,6 @@ export default function TransferTable() {
         return localDate;
       },
       editable: true,
-      // renderEditCell: (params: any) => (
-      //   <LocalizationProvider dateAdapter={AdapterMoment}>
-      //     <DatePicker
-      //       value={params.value || null}
-      //       onChange={(newValue: any) =>
-      //         params.api
-      //           .getCellEditorInstances()
-      //           .forEach((editor: any) => editor.setValue(newValue))
-      //       }
-      //       slots={{ textField: TextField }}
-      //     />
-      //   </LocalizationProvider>
-      // ),
     },
     {
       field: "sourceAccount",
@@ -182,13 +152,32 @@ export default function TransferTable() {
     },
   ];
 
+  const handleAddRow = () => {
+    const newTransfer: Transfer = {
+      transferId: 0,
+      sourceAccount: "",
+      destinationAccount: "",
+      transactionDate: new Date("2025-01-09"),
+      amount: 0.0,
+      //guidSource: "",
+      //guidDestination: "",
+      activeStatus: true,
+    };
+    //data = data
+    //addRow(newTransfer); // Add the new row and persist
+  };
+
   return (
     <div>
        <h2>Transfer Details</h2>
       { !showSpinner ? (
         <div data-testid="transfer-table">
             <IconButton 
-              //onClick={handleAddRow} 
+              onClick={() => {
+                setOpenForm(true)
+                return handleAddRow
+              }
+              } 
               style={{ marginLeft: 8 }}>
               <AddIcon />
             </IconButton>
@@ -211,6 +200,69 @@ export default function TransferTable() {
           <Spinner data-test-id="transfers-spinner" />
         </div>
       )}
+
+ {/* Form Overlay for Adding/Editing Transfer */}
+ <Modal
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+        aria-labelledby="form-modal"
+        aria-describedby="form-modal-description"
+      >
+        <Box sx={{ width: 400, padding: 4, backgroundColor: "white", margin: "auto", top: "20%" }}>
+          <h3>{transferData ? "Edit Transfer" : "Add New Transfer"}</h3>
+          <TextField
+            label="Source Account"
+            value={transferData?.sourceAccount || ""}
+            onChange={(e) => setTransferData((prev: any) => ({ ...prev, sourceAccount: e.target.value }))}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Destination Account"
+            value={transferData?.destinationAccount || ""}
+            onChange={(e) => setTransferData((prev: any) => ({ ...prev, destinationAccount: e.target.value }))}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Amount"
+            value={transferData?.amount || ""}
+            onChange={(e) => setTransferData((prev: any) => ({ ...prev, amount: e.target.value }))}
+            fullWidth
+            margin="normal"
+            type="number"
+          />
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DatePicker
+              //value={transferData?.transactionDate || null}
+              onChange={(newValue) => setTransferData((prev: any) => ({ ...prev, transactionDate: newValue }))}
+              //renderInput={(props: any) => <TextField {...props} fullWidth margin="normal" />}
+            />
+          </LocalizationProvider>
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              //onClick={() => transferData && handleFormSubmit(transferData)}
+              style={{ marginTop: 16 }}
+            >
+              {transferData ? "Update" : "Add"}
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setOpenForm(false)}
+              style={{ marginTop: 16, marginLeft: 8 }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+
+
+
+
     </div>
   );
 }
