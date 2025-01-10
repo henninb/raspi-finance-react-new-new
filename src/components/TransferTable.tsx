@@ -272,6 +272,11 @@ export default function TransferTable() {
             fullWidth
             margin="normal"
             type="number"
+            slotProps={{
+              htmlInput: {
+                step: "0.01", // Allow decimal inputs
+              },
+            }}
           />
 
           <div>

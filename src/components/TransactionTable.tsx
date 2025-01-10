@@ -224,7 +224,7 @@ export default function TransactionTable() {
       field: "amount",
       headerName: "Amount",
       type: "number",
-      width: 75,
+      width: 90,
       renderCell: (params: any) =>
         params.value?.toLocaleString("en-US", {
           style: "currency",
@@ -505,6 +505,11 @@ export default function TransactionTable() {
       fullWidth
       margin="normal"
       type="number"
+      slotProps={{
+        htmlInput: {
+          step: "0.01", // Allow decimal inputs
+        },
+      }}
     />
 
     <Select
