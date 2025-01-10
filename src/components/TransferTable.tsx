@@ -40,9 +40,9 @@ export default function TransferTable() {
 
   const handleSnackbarClose = () => setOpen(false);
 
-    const handleDeleteRow = async (transfer: Transfer) => {
-      await deleteTransfer({ oldRow: transfer });
-    };
+  const handleDeleteRow = async (transfer: Transfer) => {
+    await deleteTransfer({ oldRow: transfer });
+  };
 
   const handleError = (error: any, moduleName: string, throwIt: boolean) => {
     const errorMsg =
@@ -58,9 +58,14 @@ export default function TransferTable() {
     try {
       const transferData = {
         ...newData,
-        sourceAccount: newData.sourceAccount || "",
-        destinationAccount: newData.destinationAccount || "",
+        //sourceAccount: newData.sourceAccount || "",
+        //destinationAccount: newData.destinationAccount || "",
+        // bh for testing purposes
+        guidSource: "00a8a750-cc3d-4c24-9263-c85af59cab64",
+        guidDestination: "00a8a750-cc3d-4c24-9263-c85af59cab64",
+        activeStatus: true
       };
+      console.log("transferData: " + JSON.stringify(transferData));
       await insertTransfer({ payload: transferData });
       return "success";
     } catch (error) {
@@ -159,8 +164,8 @@ export default function TransferTable() {
       destinationAccount: "",
       transactionDate: new Date("2025-01-09"),
       amount: 0.0,
-      //guidSource: "",
-      //guidDestination: "",
+      guidSource: "",
+      guidDestination: "",
       activeStatus: true,
     };
     //data = data
@@ -243,7 +248,7 @@ export default function TransferTable() {
             <Button
               variant="contained"
               color="primary"
-              //onClick={() => transferData && handleFormSubmit(transferData)}
+              onClick={() => transferData && addRow(transferData)}
               style={{ marginTop: 16 }}
             >
               {transferData ? "Update" : "Add"}

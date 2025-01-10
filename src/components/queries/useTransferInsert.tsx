@@ -7,6 +7,8 @@ const setupNewTransfer = (payload: Transfer) => {
   console.log(JSON.stringify(payload));
   console.log("transfer payload");
   return {
+    guidSource: payload.guidSource,
+    guidDestination: payload.guidDestination,
     sourceAccount: payload.sourceAccount,
     destinationAccount: payload.destinationAccount,
     amount: payload.amount,
