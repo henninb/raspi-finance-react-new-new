@@ -60,7 +60,7 @@ export default function TransferTable() {
         ...newData,
         //sourceAccount: newData.sourceAccount || "",
         //destinationAccount: newData.destinationAccount || "",
-        // bh for testing purposes
+        // TODO: bh for testing purposes, need to remove them 1/10/2025
         guidSource: "00a8a750-cc3d-4c24-9263-c85af59cab64",
         guidDestination: "00a8a750-cc3d-4c24-9263-c85af59cab64",
         activeStatus: true
@@ -158,18 +158,16 @@ export default function TransferTable() {
   ];
 
   const handleAddRow = () => {
-    const newTransfer: Transfer = {
-      transferId: 0,
+    return {
+      transferId: Math.random(),
       sourceAccount: "",
       destinationAccount: "",
-      transactionDate: new Date("2025-01-09"),
+      transactionDate: new Date(),
       amount: 0.0,
       guidSource: "",
       guidDestination: "",
       activeStatus: true,
     };
-    //data = data
-    //addRow(newTransfer); // Add the new row and persist
   };
 
   return (
@@ -181,7 +179,7 @@ export default function TransferTable() {
               onClick={() => {
                 setOpenForm(true)
                 return handleAddRow
-              }
+                }
               } 
               style={{ marginLeft: 8 }}>
               <AddIcon />
@@ -199,6 +197,13 @@ export default function TransferTable() {
             //   },
             // }}
           />
+            <div>
+              <SnackbarBaseline
+                message={message}
+                state={open}
+                handleSnackbarClose={handleSnackbarClose}
+              />
+            </div>
         </div>
       ) : (
         <div className="centered">
@@ -215,35 +220,60 @@ export default function TransferTable() {
       >
         <Box sx={{ width: 400, padding: 4, backgroundColor: "white", margin: "auto", top: "20%" }}>
           <h3>{transferData ? "Edit Transfer" : "Add New Transfer"}</h3>
-          <TextField
-            label="Source Account"
-            value={transferData?.sourceAccount || ""}
-            onChange={(e) => setTransferData((prev: any) => ({ ...prev, sourceAccount: e.target.value }))}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Destination Account"
-            value={transferData?.destinationAccount || ""}
-            onChange={(e) => setTransferData((prev: any) => ({ ...prev, destinationAccount: e.target.value }))}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Amount"
-            value={transferData?.amount || ""}
-            onChange={(e) => setTransferData((prev: any) => ({ ...prev, amount: e.target.value }))}
-            fullWidth
-            margin="normal"
-            type="number"
-          />
+
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
+              label="Transaction Date"
               //value={transferData?.transactionDate || null}
               onChange={(newValue) => setTransferData((prev: any) => ({ ...prev, transactionDate: newValue }))}
               //renderInput={(props: any) => <TextField {...props} fullWidth margin="normal" />}
             />
           </LocalizationProvider>
+
+          <SelectAccountNameOwnerDebit
+            onChangeFunction={(value: string) =>
+              setTransferData((prev: any) => ({ ...prev, sourceAccount: value }))
+            }
+            currentValue={transferData?.sourceAccount || ""}
+          />
+
+          {/* <TextField
+            label="Source Account"
+            value={transferData?.sourceAccount || ""}
+            onChange={(e) => setTransferData((prev: any) => ({ ...prev, sourceAccount: e.target.value }))}
+            fullWidth
+            margin="normal"
+          /> */}
+
+          <SelectAccountNameOwnerDebit
+            onChangeFunction={(value: string) =>
+              setTransferData((prev: any) => ({ ...prev, destinationAccount: value }))
+            }
+            currentValue={transferData?.destinationAccount || ""}
+          />
+          {/* <TextField
+            label="Destination Account"
+            value={transferData?.destinationAccount || ""}
+            onChange={(e) => setTransferData((prev: any) => ({ ...prev, destinationAccount: e.target.value }))}
+            fullWidth
+            margin="normal"
+          /> */}
+
+          <TextField
+            label="Amount"
+            value={transferData?.amount || ""}
+            //onChange={(e) => setTransferData((prev: any) => ({ ...prev, amount: e.target.value }))}
+            onChange={(e) =>
+              setTransferData((prev: any) => ({
+                ...prev,
+                amount: parseFloat(e.target.value) || 0, // Convert input to a number
+              }))
+            }
+            fullWidth
+            margin="normal"
+            type="number"
+          />
+
           <div>
             <Button
               variant="contained"
@@ -264,10 +294,6 @@ export default function TransferTable() {
           </div>
         </Box>
       </Modal>
-
-
-
-
     </div>
   );
 }

@@ -8,7 +8,6 @@ import IconButton from '@mui/material/IconButton';
 import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -23,11 +22,16 @@ import useFetchParameter from "./queries/useFetchParameter";
 import Payment from "./model/Payment";
 import Transaction from "./model/Transaction";
 import { GridValueFormatter } from '@mui/x-data-grid';
+import { Modal } from "@mui/material";
+import { Box } from "@mui/material";
+import { Button } from "@mui/material";
 
 export default function PaymentTable() {
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
+  const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
+  const [paymentData, setTransferData] = useState<Payment | null>(null); // State to store the data being edited
 
   const [newRow, setNewRow] = useState({
     paymentId: Math.random(), // Generate unique ID
@@ -60,34 +64,18 @@ export default function PaymentTable() {
     history("/transactions/" + rowData.accountNameOwner);
   };
 
-  const handleAddRow = async () => {
-    try {
-      await insertPayment(
-        { newRow },
-        {
-          onSuccess: () => {
-            setMessage("Row added successfully.");
-            setOpen(true);
-            setNewRow({
-              paymentId: Math.random(),
-              accountNameOwner: "",
-              transactionDate: moment().format("YYYY-MM-DD"),
-              amount: 0.0,
-              guidSource: "",
-              guidDestination: "",
-              activeStatus: true,
-            });
-          },
-          onError: (error) => {
-            setMessage(`Error adding row: ${error.message}`);
-            setOpen(true);
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Error adding row:", error);
-    }
-  };
+  const handleAddRow = () => {
+    return {
+      paymentId: Math.random(),
+      accountNameOwner: "",
+      //destinationAccount: "",
+      transactionDate: new Date(),
+      amount: 0.0,
+      //guidSource: "",
+      //guidDestination: "",
+      activeStatus: true,
+    };
+  }
 
   const handleDeleteRow = async (payment: Payment) => {
     //console.log("payment: " + JSON.stringify(payment))
@@ -117,18 +105,24 @@ export default function PaymentTable() {
     }
   };
 
-  const addRow = (newData: Payment) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          await insertPayment({ payload: newData });
-          resolve("success");
-        } catch (error) {
-          handleError(error, "addRow", false);
-          reject();
-        }
-      }, 1000);
-    });
+  const addRow = async (newData: Payment): Promise<string> => {
+    try {
+      const paymentData = {
+        ...newData,
+        //sourceAccount: newData.sourceAccount || "",
+        //destinationAccount: newData.destinationAccount || "",
+        // TODO: bh for testing purposes, need to remove them 1/10/2025
+        // guidSource: "00a8a750-cc3d-4c24-9263-c85af59cab64",
+        // guidDestination: "00a8a750-cc3d-4c24-9263-c85af59cab64",
+        // activeStatus: true
+      };
+      console.log("paymentData: " + JSON.stringify(paymentData));
+      await insertPayment({ payload: paymentData });
+      return "success";
+    } catch (error) {
+      handleError(error, "addRow", false);
+      throw error;
+    }
   };
 
   const columns: GridColDef[] = [
@@ -223,7 +217,12 @@ export default function PaymentTable() {
         <div data-testid="payment-table">
                       
             <IconButton 
-              onClick={handleAddRow} 
+              //onClick={handleAddRow} 
+              onClick={() => {
+                setOpenForm(true)
+                return handleAddRow
+                }
+              } 
               style={{ marginLeft: 8 }}>
               <AddIcon />
             </IconButton>
@@ -258,6 +257,90 @@ export default function PaymentTable() {
           <Spinner data-test-id="payments-spinner" />
         </div>
       )}
+
+{/* Form Overlay for Adding/Editing Payment */}
+<Modal
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+        aria-labelledby="form-modal"
+        aria-describedby="form-modal-description"
+      >
+        <Box sx={{ width: 400, padding: 4, backgroundColor: "white", margin: "auto", top: "20%" }}>
+          <h3>{paymentData ? "Edit Payment" : "Add New Payment"}</h3>
+
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DatePicker
+              label="Transaction Date"
+              //value={paymentData?.transactionDate || null}
+              onChange={(newValue) => setTransferData((prev: any) => ({ ...prev, transactionDate: newValue }))}
+              //renderInput={(props: any) => <TextField {...props} fullWidth margin="normal" />}
+            />
+          </LocalizationProvider>
+
+          {/* <SelectAccountNameOwnerDebit
+            onChangeFunction={(value: string) =>
+              setTransferData((prev: any) => ({ ...prev, sourceAccount: value }))
+            }
+            currentValue={paymentData?.sourceAccount || ""}
+          /> */}
+
+          {/* <TextField
+            label="Source Account"
+            value={paymentData?.sourceAccount || ""}
+            onChange={(e) => setTransferData((prev: any) => ({ ...prev, sourceAccount: e.target.value }))}
+            fullWidth
+            margin="normal"
+          /> */}
+
+          <SelectAccountNameOwnerCredit
+            onChangeFunction={(value: string) =>
+              setTransferData((prev: any) => ({ ...prev, accountNameOwner: value }))
+            }
+            currentValue={paymentData?.accountNameOwner || ""}
+          />
+          {/* <TextField
+            label="Destination Account"
+            value={paymentData?.destinationAccount || ""}
+            onChange={(e) => setTransferData((prev: any) => ({ ...prev, destinationAccount: e.target.value }))}
+            fullWidth
+            margin="normal"
+          /> */}
+
+          <TextField
+            label="Amount"
+            value={paymentData?.amount || ""}
+            onChange={(e) =>
+              setTransferData((prev: any) => ({
+                ...prev,
+                amount: parseFloat(e.target.value) || 0, // Convert input to a number
+              }))
+            }
+            fullWidth
+            margin="normal"
+            type="number"
+          />
+
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => paymentData && addRow(paymentData)}
+              style={{ marginTop: 16 }}
+            >
+              {paymentData ? "Update" : "Add"}
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setOpenForm(false)}
+              style={{ marginTop: 16, marginLeft: 8 }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+
     </div>
   );
 }

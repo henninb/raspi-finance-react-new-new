@@ -23,6 +23,26 @@ const dataTest = [
       future: 1000.0,
       cleared: 4000.75,
     },
+    {
+      accountId: 3,
+      accountNameOwner: "barclay-savings_brian",
+      accountType: "debit",
+      activeStatus: true,
+      moniker: "0000",
+      outstanding: 5000.75,
+      future: 1000.0,
+      cleared: 4000.75,
+    },
+    {
+      accountId: 2,
+      accountNameOwner: "wellsfargo-cash_brian",
+      accountType: "credit",
+      activeStatus: true,
+      moniker: "0000",
+      outstanding: 5000.75,
+      future: 1000.0,
+      cleared: 4000.75,
+    },
 ]
 
 const fetchAccountData = async (): Promise<any> => {
