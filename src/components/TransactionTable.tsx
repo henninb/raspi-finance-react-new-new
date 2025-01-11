@@ -31,11 +31,14 @@ import useFetchValidationAmount from "./queries/useFetchValidationAmount";
 import useValidationAmountInsert from "./queries/useValidationAmountInsert";
 import Transaction from "./model/Transaction";
 import {TransactionState} from "./model/TransactionState";
+import { TransactionType } from "./model/TransactionType";
+import { ReoccurringType } from "./model/ReoccurringType";
 import ValidationAmount from "./model/ValidationAmount";
 import { Modal } from "@mui/material";
 import {Box} from "@mui/material";
 import {Button} from "@mui/material";
 import {AccountType} from "./model/AccountType"
+import { v4 as uuidv4 } from 'uuid';
 
 export default function TransactionTable() {
   const [loadMoveDialog, setLoadMoveDialog] = useState(false);
@@ -47,15 +50,7 @@ export default function TransactionTable() {
   const [showSpinner, setShowSpinner] = useState(true);
   const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
   //const [transactionData, setTransactionData] = useState<Transaction | null>(null); // State to store the data being edited
-  const [transactionData, setTransactionData] = useState({
-    transactionDate: new Date(), // Default to today's date
-    reoccurringType: "onetime",  // Default to "onetime"
-    amount: 0.0,                 // Default to 0.0
-    transactionState: "outstanding", // Default to "outstanding"
-    description: "",
-    category: "",
-    notes: "",
-  });
+
 
   const routeMatch: PathMatch<string> | null = useMatch("/transactions/:account");
   let accountNameOwner = "default";
@@ -65,6 +60,21 @@ export default function TransactionTable() {
   } else {
     console.log("accountNameOwner is set to the default.");
   }
+
+  const [transactionData, setTransactionData] = useState({
+    transactionDate: new Date(), // Default to today's date
+    accountNameOwner: accountNameOwner,
+    reoccurringType: "onetime" as ReoccurringType,  // Default to "onetime"
+    amount: 0.0,                 // Default to 0.0
+    transactionState: "outstanding" as TransactionState, // Default to "outstanding"
+    transactionType: "undefined" as TransactionType,
+    guid: uuidv4(),
+    description: "",
+    category: "",
+    accountType: "undefined" as AccountType,
+    activeStatus: true,
+    notes: "",
+  });
 
   const transactionStates = ['outstanding', 'future', 'cleared'];
 
@@ -100,17 +110,18 @@ export default function TransactionTable() {
   const handleAddRow = () => {
     return {
       transactionId: Math.random(),
-      transactionDate: new Date(),
-      amount: 0.0,
-      accountType: 'AccountType',
-      accountNameOwner: "",
+      transactionDate: new Date(), // Default to today's date
+      accountNameOwner: accountNameOwner,
+      reoccurringType: "onetime",  // Default to "onetime"
+      amount: 0.0,                 // Default to 0.0
+      transactionState: "outstanding", // Default to "outstanding"
+      transactionType: "undefined",
+      guid: uuidv4(),
       description: "",
       category: "",
-      transactionState: 'TransactionState',
-      transactionType: 'TransactionType',
-      reoccurringType: 'ReoccurringType',
-      notes: "",
+      accountType: "undefined",
       activeStatus: true,
+      notes: "",
     };
   }
 
@@ -449,6 +460,20 @@ export default function TransactionTable() {
     </LocalizationProvider>
 
     <TextField
+      label="GUID"
+      //value={transactionData?.guid || ""}
+      value={uuidv4()}
+      onChange={(e) =>
+        setTransactionData((prev: any) => ({
+          ...prev,
+          guid: e.target.value,
+        }))
+      }
+      fullWidth
+      margin="normal"
+    />
+
+    <TextField
       label="Description"
       value={transactionData?.description || ""}
       onChange={(e) =>
@@ -495,7 +520,8 @@ export default function TransactionTable() {
 
     <TextField
       label="Amount"
-      value={transactionData?.amount || ""}
+      //value={transactionData?.amount || ""}
+      value={transactionData?.amount ?? ""}
       onChange={(e) =>
         setTransactionData((prev: any) => ({
           ...prev,
@@ -581,7 +607,7 @@ export default function TransactionTable() {
         variant="contained"
         color="primary"
         // TODO: bh
-        //onClick={() => transactionData && addRow(transactionData)}
+        onClick={() => transactionData && addRow(transactionData)}
         style={{ marginTop: 16 }}
       >
         {transactionData ? "Update" : "Add"}

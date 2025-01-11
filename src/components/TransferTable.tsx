@@ -261,7 +261,8 @@ export default function TransferTable() {
 
           <TextField
             label="Amount"
-            value={transferData?.amount || ""}
+            //value={transferData?.amount || ""}
+            value={transferData?.amount ?? ""}
             //onChange={(e) => setTransferData((prev: any) => ({ ...prev, amount: e.target.value }))}
             onChange={(e) =>
               setTransferData((prev: any) => ({

@@ -308,7 +308,8 @@ export default function PaymentTable() {
 
           <TextField
             label="Amount"
-            value={paymentData?.amount || ""}
+            //value={paymentData?.amount || ""}
+            value={paymentData?.amount ?? ""}
             onChange={(e) =>
               setTransferData((prev: any) => ({
                 ...prev,
