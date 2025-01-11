@@ -50,7 +50,7 @@ export default function TransactionTable() {
   const [showSpinner, setShowSpinner] = useState(true);
   const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
   //const [transactionData, setTransactionData] = useState<Transaction | null>(null); // State to store the data being edited
-
+  const [modifiedRows, setModifiedRows] = useState<Record<string, boolean>>({}); // Track modified rows
 
   const routeMatch: PathMatch<string> | null = useMatch("/transactions/:account");
   let accountNameOwner = "default";
@@ -124,6 +124,12 @@ export default function TransactionTable() {
       notes: "",
     };
   }
+
+  const handleCellEditStop = (params: any) => {
+    // Mark the row as modified
+    const { id } = params;
+    setModifiedRows((prev) => ({ ...prev, [id]: true }));
+  };
 
   const handleInsertNewValidationData = async (
     accountNameOwner: string,
@@ -332,29 +338,35 @@ export default function TransactionTable() {
     // },
     {
       field: "",
-      headerName: "",
+      headerName: "Actions",
       sortable: false,
       width: 120,
-      renderCell: (params) => (
-        <>
-        <IconButton       
-          onClick={() => {
-            //handleUpdateRow(params.row)
-          }
-          }
-        >
-          <UpdateIcon />
-        </IconButton>
-        <IconButton       
-          onClick={() => {
-            handleDeleteRow(params.row)
-          }
-          }
-        >
-          <DeleteIcon />
-        </IconButton>
-        </>
-      ),
+      renderCell: (params) => {
+        const { id } = params.row;
+      
+        return (
+          <>
+            {modifiedRows[id] && (
+              <IconButton
+                onClick={() => {
+                  console.log('edit cell');
+                  // handleUpdateRow(params.row);
+                }}
+              >
+                <UpdateIcon />
+              </IconButton>
+            )}
+      
+            <IconButton
+              onClick={() => {
+                handleDeleteRow(params.row);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </>
+        );
+      }
     },
   ];
 
@@ -409,6 +421,14 @@ export default function TransactionTable() {
             getRowId={(row:any) => row.transactionId}
             checkboxSelection={false}
             rowSelection={false}
+            // onCellEditCommit={(params: any) => {
+            //   console.log('Edit committed:', params);
+            // }}
+            // onCellEditStop={handleCellEditStop}
+            // processRowUpdate={(updatedRow, oldRow) => {
+            //   console.log('Updated row:', updatedRow);
+            //   return updatedRow; // Ensure you return the updated row
+            // }}
           />
             <div>
               <SnackbarBaseline
@@ -435,7 +455,6 @@ export default function TransactionTable() {
 
 {/* Form Overlay for Adding/Editing Transaction */}
 <Modal
-  // add back in
   open={openForm}
   onClose={() => setOpenForm(false)}
   aria-labelledby="transaction-form-modal"
@@ -459,7 +478,7 @@ export default function TransactionTable() {
       />
     </LocalizationProvider>
 
-    <TextField
+    {/* <TextField
       label="GUID"
       //value={transactionData?.guid || ""}
       value={uuidv4()}
@@ -471,7 +490,7 @@ export default function TransactionTable() {
       }
       fullWidth
       margin="normal"
-    />
+    /> */}
 
     <TextField
       label="Description"
@@ -548,7 +567,6 @@ export default function TransactionTable() {
         }))
       }
       fullWidth
-      //margin="normal"
     >
       {transactionStates.map((state) => (
         <MenuItem key={state} value={state}>
@@ -567,7 +585,6 @@ export default function TransactionTable() {
         }))
       }
       fullWidth
-      margin="normal"
     /> */}
 
     <Select
@@ -580,7 +597,6 @@ export default function TransactionTable() {
         }))
       }
       fullWidth
-      //margin="normal"
     >
       <MenuItem value="onetime">One-Time</MenuItem>
       <MenuItem value="weekly">Weekly</MenuItem>
@@ -606,7 +622,6 @@ export default function TransactionTable() {
       <Button
         variant="contained"
         color="primary"
-        // TODO: bh
         onClick={() => transactionData && addRow(transactionData)}
         style={{ marginTop: 16 }}
       >
