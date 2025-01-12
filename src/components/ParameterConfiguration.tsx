@@ -4,10 +4,11 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { IconButton, Modal, Box, Button, TextField } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/DeleteRounded';
 import EditIcon from '@mui/icons-material/CreateRounded';
+import AddIcon from '@mui/icons-material/AddRounded';
 import useFetchParameters from "./queries/useFetchParameters";
 import useParameterDelete from "./queries/useParameterDelete";
 import useParameterUpdate from "./queries/useParameterUpdate";
-import Parameter from "./model/Parameter"; // Adjust model if necessary
+import Parameter from "./model/Parameter";
 
 export default function ParameterConfiguration() {
   const [showSpinner, setShowSpinner] = useState(true);
@@ -79,10 +80,18 @@ export default function ParameterConfiguration() {
         </div>
       ) : (
         <div>
+                    <IconButton 
+              onClick={() => {
+                setOpenForm(true)
+                //return handleAddRow
+                }
+              } 
+              style={{ marginLeft: 8 }}>
+              <AddIcon />
+            </IconButton>
           <DataGrid
             columns={columns}
             rows={data}
-            //pagination={false}
             paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
             getRowId={(row: Parameter) => row.parameterId}
