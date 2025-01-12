@@ -14,8 +14,9 @@ import SelectCategory from "./SelectCategory";
 import SelectTransactionState from "./SelectTransactionState";
 import SelectTransactionType from "./SelectTransactionType";
 import SelectReoccurringType from "./SelectReoccurringType";
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/DeleteRounded';
+import EditIcon from '@mui/icons-material/CreateRounded';
+import AddIcon from '@mui/icons-material/AddRounded';
 import UpdateIcon from '@mui/icons-material/Check';
 import AttachMoneyRounded from '@mui/icons-material/AttachMoneyRounded'
 import IconButton from '@mui/material/IconButton';
@@ -341,7 +342,15 @@ export default function TransactionTable() {
         const { id } = params.row;
       
         return (
-          <>   
+          <div>
+            <IconButton
+                onClick={() => {
+                  //setParameterData(params.row);
+                  setOpenForm(true);
+                }}
+            >
+              <EditIcon />
+            </IconButton>
             <IconButton
               onClick={() => {
                 handleDeleteRow(params.row);
@@ -349,7 +358,7 @@ export default function TransactionTable() {
             >
               <DeleteIcon />
             </IconButton>
-          </>
+          </div>
         );
       }
     },

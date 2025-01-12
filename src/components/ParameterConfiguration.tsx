@@ -61,7 +61,7 @@ export default function ParameterConfiguration() {
               setOpenForm(true);
             }}
           >
-            <EditIcon />
+           <EditIcon />
           </IconButton>
           <IconButton onClick={() => handleDelete(params.row.parameterName)}>
             <DeleteIcon />
@@ -80,7 +80,7 @@ export default function ParameterConfiguration() {
         </div>
       ) : (
         <div>
-                    <IconButton 
+            <IconButton 
               onClick={() => {
                 setOpenForm(true)
                 //return handleAddRow

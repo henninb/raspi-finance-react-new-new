@@ -6,15 +6,13 @@ import SnackbarBaseline from "./SnackbarBaseline";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-//import moment from "moment";
 import TextField from "@mui/material/TextField";
 import useFetchTransfer from "./queries/useFetchTransfer";
 import useTransferInsert from "./queries/useTransferInsert";
 import useTransferDelete from "./queries/useTransferDelete";
 import Transfer from "./model/Transfer";
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import UpdateIcon from '@mui/icons-material/Check';
+import AddIcon from '@mui/icons-material/AddRounded';
 import IconButton from '@mui/material/IconButton';
 import { Modal } from "@mui/material";
 import {Box} from "@mui/material";
@@ -139,19 +137,19 @@ export default function TransferTable() {
     },
     {
       field: "",
-      headerName: "",
+      headerName: "Actions",
       sortable: false,
       width: 120,
       renderCell: (params) => (
         <div>
-        <IconButton       
-          onClick={() => {
-            handleDeleteRow(params.row)
-          }
-          }
-        >
-          <DeleteIcon />
-        </IconButton>
+          <IconButton       
+            onClick={() => {
+              handleDeleteRow(params.row)
+            }
+            }
+          >
+            <DeleteIcon />
+          </IconButton>
         </div>
       ),
     },

@@ -39,7 +39,6 @@ export default function useAccountUpdate() {
       },
 
       onSuccess: (response : any) => {
-        //let oldData = queryClient.getQueryData("account");
         const oldData = queryClient.getQueryData<Account[]>("account");
 
         if (oldData) {
@@ -50,9 +49,6 @@ export default function useAccountUpdate() {
           // If no old data, initialize with the new response
           queryClient.setQueryData("account", [response]);
         }
-
-        //let newData = [response, ...oldData];
-        //queryClient.setQueryData("account", newData);
       },
     },
   );

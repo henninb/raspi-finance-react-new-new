@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 
 
 const dataTest = [
-  {"parameterId": Math.random(), "parameterName": "payment_account", "parameterValue": "wfargo_brian"}
+  {"parameterName": "payment_account", "parameterValue": "wfargo_brian"}
 ]
 
 const fetchParameterData = async (parameterName: any): Promise<any> => {
