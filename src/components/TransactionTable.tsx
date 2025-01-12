@@ -17,7 +17,6 @@ import SelectReoccurringType from "./SelectReoccurringType";
 import DeleteIcon from '@mui/icons-material/DeleteRounded';
 import EditIcon from '@mui/icons-material/CreateRounded';
 import AddIcon from '@mui/icons-material/AddRounded';
-import UpdateIcon from '@mui/icons-material/Check';
 import AttachMoneyRounded from '@mui/icons-material/AttachMoneyRounded'
 import IconButton from '@mui/material/IconButton';
 import { useMatch, PathMatch } from "react-router-dom";
@@ -197,7 +196,7 @@ export default function TransactionTable() {
        if (isSuccess && isSuccessTotals && isSuccessValidationTotals ) {
          setShowSpinner(false);
        }
-     }, [isSuccess, isSuccessTotals]); 
+     }, [isSuccess, isSuccessTotals, isSuccessValidationTotals]); 
 
   const columns: GridColDef[] = [
     {

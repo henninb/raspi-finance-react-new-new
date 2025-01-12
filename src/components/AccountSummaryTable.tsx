@@ -11,7 +11,6 @@ import Account from "./model/Account";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import UpdateIcon from '@mui/icons-material/Check';
 import IconButton from '@mui/material/IconButton';
 import { useMatch, PathMatch } from "react-router-dom";
 import { Modal } from "@mui/material";
@@ -40,6 +39,10 @@ export default function AccountSummaryTable() {
 
   const handleButtonClickLink = (accountNameOwner: string) => {
     history("/transactions/" + accountNameOwner);
+  };
+
+  const handleDeleteRow = async (account: Account) => {
+    await deleteAccount({ oldRow: account });
   };
 
   const columns: GridColDef[] = [
@@ -133,7 +136,7 @@ export default function AccountSummaryTable() {
         <div>
         <IconButton       
           onClick={() => {
-            console.log("handleDeleteRow(params.row)");
+            handleDeleteRow(params.row);
           }
           }
         >

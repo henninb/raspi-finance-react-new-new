@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { useMutation, useQueryClient } from "react-query";
 
 const deleteAccount = async (payload: any): Promise<any> => {
+  try {
   const endpoint = "/api/account/delete/" + payload.accountNameOwner;
 
   const response = await axios.delete(endpoint, {
@@ -13,6 +14,9 @@ const deleteAccount = async (payload: any): Promise<any> => {
     },
   });
   return response.data;
+  } catch(error) {
+    return [{}]
+  }
 };
 
 export default function useAccountDelete() {
@@ -37,7 +41,7 @@ export default function useAccountDelete() {
       onSuccess: (response, variables) => {
         const oldData: any = queryClient.getQueryData("account");
         const newData = oldData.filter(
-          (t: any) => t.tableData.id !== variables.oldRow.tableData.id,
+          (t: any) => t.accountId !== variables.oldRow.accountId,
         );
         queryClient.setQueryData("account", newData);
       },

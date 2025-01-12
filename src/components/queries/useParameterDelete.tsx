@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { useMutation, useQueryClient } from "react-query";
 
 const deleteParameter = async (payload: any): Promise<any> => {
+  try {
   // TODO: change the word parm to the actual path.
   const endpoint = "/api/parm/delete/" + payload.parameterName;
 
@@ -14,6 +15,9 @@ const deleteParameter = async (payload: any): Promise<any> => {
     },
   });
   return response.data;
+  } catch(error) {
+    return [{}]
+  }
 };
 
 export default function useParameterDelete() {

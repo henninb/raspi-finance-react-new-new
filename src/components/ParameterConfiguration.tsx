@@ -24,8 +24,12 @@ export default function ParameterConfiguration() {
     }
   }, [isSuccess]);
 
-  const handleDelete = async (parameterName: string) => {
-    await deleteParameter({ parameterName });
+  // const handleDelete = async (parameterName: string) => {
+  //   await deleteParameter({ parameterName });
+  // };
+
+  const handleDelete = async (parameter: Parameter) => {
+    await deleteParameter({ oldRow: parameter });
   };
 
   const handleUpdate = async (newData: Parameter) => {
@@ -63,7 +67,7 @@ export default function ParameterConfiguration() {
           >
            <EditIcon />
           </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.parameterName)}>
+          <IconButton onClick={() => handleDelete(params.row)}>
             <DeleteIcon />
           </IconButton>
         </div>
