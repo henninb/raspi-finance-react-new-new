@@ -421,14 +421,11 @@ export default function TransactionTable() {
             getRowId={(row:any) => row.transactionId}
             checkboxSelection={false}
             rowSelection={false}
-            // onCellEditCommit={(params: any) => {
-            //   console.log('Edit committed:', params);
-            // }}
-            // onCellEditStop={handleCellEditStop}
-            // processRowUpdate={(updatedRow, oldRow) => {
-            //   console.log('Updated row:', updatedRow);
-            //   return updatedRow; // Ensure you return the updated row
-            // }}
+            processRowUpdate={(newRow :any, oldRow: any) => {
+              // Handle row update here
+              console.log('Row updated:', newRow);
+              return newRow; // Return the updated row
+            }}
           />
             <div>
               <SnackbarBaseline
