@@ -9,17 +9,22 @@ import useAccountDelete from "./queries/useAccountDelete";
 import useFetchTotals from "./queries/useFetchTotals";
 import Account from "./model/Account";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import UpdateIcon from '@mui/icons-material/Check';
 import IconButton from '@mui/material/IconButton';
 import { useMatch, PathMatch } from "react-router-dom";
+import { Modal } from "@mui/material";
+import {Box} from "@mui/material";
+import {Button} from "@mui/material";
+import {TextField} from "@mui/material";
 
 export default function AccountSummaryTable() {
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
+  const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
+  const [accountData, setAccountData] = useState<Account | null>(null); // State to store the data being edited
   const history = useNavigate();
 
   const { data, isSuccess, isLoading } = useFetchAccount();
@@ -191,13 +196,31 @@ export default function AccountSummaryTable() {
     });
   };
 
+  const handleAddRow = () => {
+    return {
+      accountId: Math.random(),
+      accountType: 'undefined',
+      activeStatus: true,
+    };
+  };
+
   return (
     <div>
     <h2>Account Details</h2>
       {!showSpinner ? (
         <div data-testid="account-table">
-            <IconButton 
+            {/* <IconButton 
               //onClick={handleAddRow} 
+              style={{ marginLeft: 8 }}>
+              <AddIcon />
+            </IconButton> */}
+
+            <IconButton 
+              onClick={() => {
+                setOpenForm(true)
+                return handleAddRow
+                }
+              } 
               style={{ marginLeft: 8 }}>
               <AddIcon />
             </IconButton>
@@ -231,6 +254,90 @@ export default function AccountSummaryTable() {
           <Spinner />
         </div>
       )}
+
+{/* Modal for Adding/Editing Account */}
+<Modal
+  open={openForm}
+  onClose={() => setOpenForm(false)}
+  aria-labelledby="account-form-modal"
+  aria-describedby="account-form-modal-description"
+>
+  <Box
+    sx={{
+      width: 400,
+      padding: 4,
+      backgroundColor: "white",
+      margin: "auto",
+      top: "20%",
+      position: "relative",
+      boxShadow: 24,
+      borderRadius: 2,
+    }}
+  >
+    <h3>{accountData ? "Edit Account" : "Add New Account"}</h3>
+
+    <TextField
+      label="Account Name Owner"
+      value={accountData?.accountNameOwner || ""}
+      onChange={(e) =>
+        setAccountData((prev: any) => ({
+          ...prev,
+          accountNameOwner: e.target.value,
+        }))
+      }
+      fullWidth
+      margin="normal"
+    />
+
+    <TextField
+      label="Account Type"
+      value={accountData?.accountType || ""}
+      onChange={(e) =>
+        setAccountData((prev: any) => ({
+          ...prev,
+          accountType: e.target.value,
+        }))
+      }
+      fullWidth
+      margin="normal"
+    />
+
+    <TextField
+      label="Moniker"
+      value={accountData?.moniker || ""}
+      onChange={(e) =>
+        setAccountData((prev: any) => ({
+          ...prev,
+          moniker: e.target.value,
+        }))
+      }
+      fullWidth
+      margin="normal"
+    />
+
+    <div>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => accountData && addRow(accountData)}
+        style={{ marginTop: 16 }}
+      >
+        {accountData ? "Update" : "Add"}
+      </Button>
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={() => setOpenForm(false)}
+        style={{ marginTop: 16, marginLeft: 8 }}
+      >
+        Cancel
+      </Button>
+    </div>
+  </Box>
+</Modal>
+
+
+
     </div>
   );
 }

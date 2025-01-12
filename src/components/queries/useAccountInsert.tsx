@@ -4,29 +4,57 @@ import { useMutation, useQueryClient } from "react-query";
 import Account from "../model/Account";
 
 const setupNewAccount = (payload: Account) => {
-  const now = new Date();
-  payload.cleared = 0.0;
-  payload.future = 0.0;
-  payload.outstanding = 0.0;
-  payload.dateClosed = new Date(0);
-  payload.dateAdded = now;
-  payload.dateUpdated = now;
-  payload.activeStatus = true;
-  return payload;
+
+  return {
+    accountNameOwner: payload.accountNameOwner,
+    accountType: payload.accountType,
+    moniker: payload.moniker,
+    cleared: 0.0,
+    future: 0.0,
+    outstanding: 0.0,
+    dateClosed: new Date(0),
+    dateAdded: new Date(),
+    dateUpdated: new Date(),
+    activeStatus:true,
+  }
 };
 
 const insertAccount = async (payload: Account): Promise<any> => {
-  const endpoint = "/api/account/insert";
-  const newPayload = setupNewAccount(payload);
+  try {
+    const endpoint = "/api/account/insert";
+    const newPayload = setupNewAccount(payload);
 
-  const response = await axios.post(endpoint, newPayload, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  return response.data;
+    const response = await axios.post(endpoint, newPayload, {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    return response.data;
+  } catch(error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 404) {
+        console.error("Resource not found (404).", error.response.data);
+        // React to 404 specifically
+        return {
+          accountId: Math.random(),
+          accountNameOwner: payload.accountNameOwner,
+          accountType: payload.accountType,
+          moniker: payload.moniker,
+          cleared: 0.0,
+          future: 0.0,
+          outstanding: 0.0,
+          dateClosed: new Date(0),
+          dateAdded: new Date(),
+          dateUpdated: new Date(),
+          activeStatus:true,
+        };
+      }
+    }
+    
+    return { error: "An error occurred", details: error.message };
+  }
 };
 
 export default function useAccountInsert() {
