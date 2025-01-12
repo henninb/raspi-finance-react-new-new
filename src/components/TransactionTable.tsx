@@ -107,6 +107,20 @@ export default function TransactionTable() {
     }
   };
 
+  const updateRow = (newData: any, oldData: any): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          updateTransaction({ newRow: newData, oldRow: oldData });
+          resolve("success");
+        } catch (error) {
+          handleError(error, "updateRow", false);
+          reject();
+        }
+      }, 1000);
+    });
+  };
+
   const handleAddRow = () => {
     return {
       transactionId: Math.random(),
@@ -422,7 +436,10 @@ export default function TransactionTable() {
             checkboxSelection={false}
             rowSelection={false}
             processRowUpdate={(newRow :any, oldRow: any) => {
+
               // Handle row update here
+              console.log('Row updating:', newRow);
+              updateRow(newRow, oldRow);
               console.log('Row updated:', newRow);
               return newRow; // Return the updated row
             }}

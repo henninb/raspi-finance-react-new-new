@@ -190,12 +190,11 @@ export default function TransferTable() {
             //autoPageSize
             //checkboxSelection
             getRowId={(row: Transfer) => row.transferId}
-            // sx={{
-            //   "& .MuiDataGrid-columnHeaders": {
-            //     backgroundColor: "#9965f4",
-            //     color: "#FFFFFF",
-            //   },
-            // }}
+            processRowUpdate={(newRow :any, oldRow: any) => {
+              // Handle row update here
+              console.log('Row updated:', newRow);
+              return newRow; // Return the updated row
+            }}
           />
             <div>
               <SnackbarBaseline

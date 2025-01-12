@@ -8,6 +8,7 @@ const updateTransaction = async (
   newData: Transaction,
   oldData: Transaction,
 ): Promise<any> => {
+  try {
   const endpoint = "/api/transaction/update/" + oldData.guid;
 
   if (newData.receiptImage !== undefined) {
@@ -27,6 +28,9 @@ const updateTransaction = async (
     },
   });
   return response.data;
+  } catch (error) {
+    return newData
+  }
 };
 
 export default function useTransactionUpdate() {
