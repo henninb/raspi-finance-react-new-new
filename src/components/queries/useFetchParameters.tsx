@@ -2,8 +2,8 @@ import axios, { AxiosError } from "axios";
 import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
 
-const dataTest = [{}]
-// wget http://hornsup:8443/parm/select/active
+//const dataTest = [{parameterName: "payment_account", parameterValue: "wfargo_brian"}]
+
 const fetchParameterData = async (): Promise<any> => {
   try {
     const response = await axios.get("/api/parm/select/active", {
@@ -19,7 +19,11 @@ const fetchParameterData = async (): Promise<any> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching parameters data:", error);
-    return dataTest
+    return [{
+      parameterId: Math.random(),
+      parameterName: "payment_account", 
+      parameterValue: "wfargo_brian"
+    }]
   }
 };
 
