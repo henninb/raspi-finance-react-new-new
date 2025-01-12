@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { IconButton, Modal, Box, Button, TextField } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteRounded';
+import EditIcon from '@mui/icons-material/CreateRounded';
 import useFetchParameters from "./queries/useFetchParameters";
 import useParameterDelete from "./queries/useParameterDelete";
 import useParameterUpdate from "./queries/useParameterUpdate";
@@ -82,6 +82,9 @@ export default function ParameterConfiguration() {
           <DataGrid
             columns={columns}
             rows={data}
+            //pagination={false}
+            paginationModel={{ pageSize: data?.length, page: 0 }}
+            hideFooterPagination={true}
             getRowId={(row: Parameter) => row.parameterId}
           />
         </div>
