@@ -55,18 +55,21 @@ export default function AccountSummaryTable() {
           {params.row.accountNameOwner}
         </Button>
       ),
+      editable: true,
       cellClassName: "nowrap",
     },
     {
       field: "accountType",
       headerName: "Account Type",
       width: 150,
+      editable: true,
       cellClassName: "nowrap",
     },
     {
       field: "moniker",
       headerName: "Moniker",
       width: 150,
+      editable: true,
       cellClassName: "nowrap",
     },
     {
@@ -209,12 +212,6 @@ export default function AccountSummaryTable() {
     <h2>Account Details</h2>
       {!showSpinner ? (
         <div data-testid="account-table">
-            {/* <IconButton 
-              //onClick={handleAddRow} 
-              style={{ marginLeft: 8 }}>
-              <AddIcon />
-            </IconButton> */}
-
             <IconButton 
               onClick={() => {
                 setOpenForm(true)
@@ -335,8 +332,6 @@ export default function AccountSummaryTable() {
     </div>
   </Box>
 </Modal>
-
-
 
     </div>
   );

@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { basicAuth } from "../Common";
 //import { useMutation, useQueryClient } from "react-query";
-import { useMutation } from "react-query";
+import { useMutation,useQueryClient } from "react-query";
 import Parameter from "../model/Parameter";
 
 const updateParameter = async (
@@ -23,7 +23,7 @@ const updateParameter = async (
 };
 
 export default function useParameterUpdate() {
-  //const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation(
     ["updateParameter"],
@@ -40,8 +40,18 @@ export default function useParameterUpdate() {
             : "error.response is undefined - cannot stringify.",
         );
       },
+      onSuccess: (response : any) => {
+        const oldData = queryClient.getQueryData<Parameter[]>("parameter");
 
-      // onSuccess: (_response, _variables) => {},
+        if (oldData) {
+          // Combine the response with the existing data
+          const newData = [response, ...oldData];
+          queryClient.setQueryData("parameter", newData);
+        } else {
+          // If no old data, initialize with the new response
+          queryClient.setQueryData("parameter", [response]);
+        }
+      },
     },
   );
 }

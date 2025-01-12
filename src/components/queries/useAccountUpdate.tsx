@@ -38,11 +38,21 @@ export default function useAccountUpdate() {
         );
       },
 
-      onSuccess: (response) => {
-        let oldData = queryClient.getQueryData("account");
-        // @ts-ignore
-        let newData = [response, ...oldData];
-        queryClient.setQueryData("account", newData);
+      onSuccess: (response : any) => {
+        //let oldData = queryClient.getQueryData("account");
+        const oldData = queryClient.getQueryData<Account[]>("account");
+
+        if (oldData) {
+          // Combine the response with the existing data
+          const newData = [response, ...oldData];
+          queryClient.setQueryData("account", newData);
+        } else {
+          // If no old data, initialize with the new response
+          queryClient.setQueryData("account", [response]);
+        }
+
+        //let newData = [response, ...oldData];
+        //queryClient.setQueryData("account", newData);
       },
     },
   );
