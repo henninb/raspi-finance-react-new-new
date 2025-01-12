@@ -237,6 +237,11 @@ export default function AccountSummaryTable() {
             getRowId={(row) => row.accountId}
             paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
+            processRowUpdate={(newRow :any, oldRow: any) => {
+              // Handle row update here
+              console.log('Row updated:', newRow);
+              return newRow; // Return the updated row
+            }}
           />
           <div>
             <SnackbarBaseline
