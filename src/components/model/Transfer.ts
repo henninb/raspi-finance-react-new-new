@@ -4,8 +4,8 @@ export default interface Transfer {
   destinationAccount: string;
   transactionDate: Date;
   amount: number;
-  guidSource: string;
-  guidDestination: string;
+  guidSource?: string;
+  guidDestination?: string;
   activeStatus: boolean;
   dateAdded?: Date;
   dateUpdated?: Date;
