@@ -50,7 +50,7 @@ export default function TransactionTable() {
   const [showSpinner, setShowSpinner] = useState(true);
   const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
   //const [transactionData, setTransactionData] = useState<Transaction | null>(null); // State to store the data being edited
-  const [modifiedRows, setModifiedRows] = useState<Record<string, boolean>>({}); // Track modified rows
+  //const [modifiedRows, setModifiedRows] = useState<Record<string, boolean>>({}); // Track modified rows
 
   const routeMatch: PathMatch<string> | null = useMatch("/transactions/:account");
   let accountNameOwner = "default";
@@ -138,12 +138,6 @@ export default function TransactionTable() {
       notes: "",
     };
   }
-
-  const handleCellEditStop = (params: any) => {
-    // Mark the row as modified
-    const { id } = params;
-    setModifiedRows((prev) => ({ ...prev, [id]: true }));
-  };
 
   const handleInsertNewValidationData = async (
     accountNameOwner: string,
@@ -244,12 +238,6 @@ export default function TransactionTable() {
       headerName: 'Category',
       width: 150,
       editable: true,
-      // renderEditCell: (params: any) => (
-      //   <SelectCategory
-      //     currentValue={params.value || 'none'}
-      //     onChange={(newValue: any) => params.api.getCellEditorInstances().forEach((editor: any) => editor.setValue(newValue))}
-      //   />
-      // ),
     },
     {
       field: "amount",
@@ -321,12 +309,6 @@ export default function TransactionTable() {
       headerName: 'Reoccur',
       width: 150,
       renderCell: (params: any) => params.value || 'undefined',
-      // renderEditCell: (params: any) => (
-      //   <SelectReoccurringType
-      //     currentValue={params.value || 'onetime'}
-      //     onChange={(newValue: any) => params.api.getCellEditorInstances().forEach((editor: any) => editor.setValue(newValue))}
-      //   />
-      // ),
     },
     {
       field: 'notes',
@@ -359,18 +341,7 @@ export default function TransactionTable() {
         const { id } = params.row;
       
         return (
-          <>
-            {modifiedRows[id] && (
-              <IconButton
-                onClick={() => {
-                  console.log('edit cell');
-                  // handleUpdateRow(params.row);
-                }}
-              >
-                <UpdateIcon />
-              </IconButton>
-            )}
-      
+          <>   
             <IconButton
               onClick={() => {
                 handleDeleteRow(params.row);
