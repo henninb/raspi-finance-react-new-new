@@ -2,25 +2,23 @@ import React, { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import SnackbarBaseline from "./SnackbarBaseline";
-import useFetchCategory from "./queries/useFetchCategory";
-import useCategoryInsert from "./queries/useCategoryInsert";
-//import useCategoryDelete from "./queries/useCategoryDelete";
-import Category from "./model/Category";
+import useFetchDescription from "./queries/useFetchDescription";
+import useDescriptionInsert from "./queries/useDescriptionInsert";
+import Description from "./model/Description";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/AddRounded";
 import IconButton from "@mui/material/IconButton";
 import { Modal, Box, Button, TextField } from "@mui/material";
 
-export default function CategoryTable() {
+export default function DescriptionTable() {
   const [message, setMessage] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [showSpinner, setShowSpinner] = useState(true);
   const [openForm, setOpenForm] = useState<boolean>(false);
-  const [categoryData, setCategoryData] = useState<Category | null>(null);
+  const [descriptionData, setDescriptionData] = useState<Description | null>(null);
 
-  const { data, isSuccess } = useFetchCategory();
-  const { mutate: insertCategory } = useCategoryInsert();
-  //const { mutate: deleteCategory } = useCategoryDelete();
+  const { data, isSuccess } = useFetchDescription();
+  const { mutate: insertDescription } = useDescriptionInsert();
 
   useEffect(() => {
     if (isSuccess) {
@@ -29,10 +27,6 @@ export default function CategoryTable() {
   }, [isSuccess]);
 
   const handleSnackbarClose = () => setOpen(false);
-
-//   const handleDeleteRow = async (category: Category) => {
-//     await deleteCategory({ oldRow: category });
-//   };
 
   const handleError = (error: any, moduleName: string, throwIt: boolean) => {
     const errorMsg =
@@ -44,13 +38,13 @@ export default function CategoryTable() {
     if (throwIt) throw error;
   };
 
-  const addRow = async (newData: Category): Promise<string> => {
+  const addRow = async (newData: Description): Promise<string> => {
     try {
-      const categoryData = {
+      const descriptionPayload = {
         ...newData,
-        activeStatus: true,
+        status: true,
       };
-      await insertCategory({ payload: categoryData });
+      await insertDescription({ payload: descriptionPayload });
       return "success";
     } catch (error) {
       handleError(error, "addRow", false);
@@ -60,13 +54,13 @@ export default function CategoryTable() {
 
   const columns: GridColDef[] = [
     {
-      field: "categoryName",
-      headerName: "Category Name",
+      field: "descriptionText",
+      headerName: "Description Text",
       width: 200,
       editable: true,
     },
     {
-      field: "activeStatus",
+      field: "status",
       headerName: "Status",
       width: 100,
       editable: true,
@@ -79,8 +73,7 @@ export default function CategoryTable() {
       renderCell: (params) => (
         <div>
           <IconButton onClick={() => {//handleDeleteRow(params.row)
-          }
-          }>
+          }}>
             <DeleteIcon />
           </IconButton>
         </div>
@@ -90,24 +83,22 @@ export default function CategoryTable() {
 
   const handleAddRow = () => {
     return {
-      categoryId: Math.random(),
-      name: "",
-      description: "",
+      descriptionId: Math.random(),
+      descriptionName: "",
       activeStatus: true,
     };
   };
 
   return (
     <div>
-      <h2>Category Details</h2>
+      <h2>Description Details</h2>
       {!showSpinner ? (
-        <div data-testid="category-table">
+        <div data-testid="description-table">
           <IconButton
             onClick={() => {
-              //setOpenForm(true);
-              //setCategoryData(handleAddRow());
-            }
-          }
+              setOpenForm(true);
+              setDescriptionData(handleAddRow());
+            }}
             style={{ marginLeft: 8 }}
           >
             <AddIcon />
@@ -115,7 +106,7 @@ export default function CategoryTable() {
           <DataGrid
             columns={columns}
             rows={data}
-            getRowId={(row: Category) => row.categoryId}
+            getRowId={(row: Description) => row.descriptionId}
             processRowUpdate={(newRow: any, oldRow: any) => {
               console.log("Row updated:", newRow);
               return newRow;
@@ -129,7 +120,7 @@ export default function CategoryTable() {
         </div>
       ) : (
         <div className="centered">
-          <Spinner data-test-id="categories-spinner" />
+          <Spinner data-test-id="descriptions-spinner" />
         </div>
       )}
 
@@ -148,13 +139,16 @@ export default function CategoryTable() {
             top: "20%",
           }}
         >
-          <h3>{categoryData ? "Edit Category" : "Add New Category"}</h3>
+          <h3>{descriptionData ? "Edit Description" : "Add New Description"}</h3>
 
           <TextField
-            label="Category Name"
-            value={categoryData?.categoryName || ""}
+            label="Description Text"
+            value={descriptionData?.descriptionName || ""}
             onChange={(e) =>
-              setCategoryData((prev: any) => ({ ...prev, categoryName: e.target.value }))
+              setDescriptionData((prev: any) => ({
+                ...prev,
+                descriptionName: e.target.value,
+              }))
             }
             fullWidth
             margin="normal"
@@ -162,9 +156,9 @@ export default function CategoryTable() {
 
           <TextField
             label="Status"
-            value={categoryData?.activeStatus || ""}
+            value={descriptionData?.activeStatus || ""}
             onChange={(e) =>
-              setCategoryData((prev: any) => ({
+              setDescriptionData((prev: any) => ({
                 ...prev,
                 activeStatus: e.target.value,
               }))
@@ -177,10 +171,10 @@ export default function CategoryTable() {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => categoryData && addRow(categoryData)}
+              onClick={() => descriptionData && addRow(descriptionData)}
               style={{ marginTop: 16 }}
             >
-              {categoryData ? "Update" : "Add"}
+              {descriptionData ? "Update" : "Add"}
             </Button>
             <Button
               variant="outlined"
