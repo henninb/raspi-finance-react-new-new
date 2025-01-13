@@ -2,13 +2,6 @@ import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
 import axios, { AxiosError } from "axios";
 
-const dataTest = [{
-  "totalsFuture": "-2055.70",
-  "totalsCleared": "152877.53",
-  "totals": "152326.56",
-  "totalsOutstanding": "1505.73"
-}]
-
 const fetchTotals = async (): Promise<any> => {
   try {
     const response = await axios.get("/api/account/totals", {
@@ -23,7 +16,12 @@ const fetchTotals = async (): Promise<any> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching totals data:", error);
-    return dataTest
+    return {
+      "totalsFuture": "-205.70",
+      "totalsCleared": "15287.53",
+      "totals": "152326.56",
+      "totalsOutstanding": "150.73"
+    }
   }
 };
 
