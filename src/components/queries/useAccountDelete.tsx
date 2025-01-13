@@ -4,18 +4,26 @@ import { useMutation, useQueryClient } from "react-query";
 
 const deleteAccount = async (payload: any): Promise<any> => {
   try {
-  const endpoint = "/api/account/delete/" + payload.accountNameOwner;
+    const endpoint = "/api/account/delete/" + payload.accountNameOwner;
 
-  const response = await axios.delete(endpoint, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  return response.data;
-  } catch(error) {
-    return [{}]
+    const response = await axios.delete(endpoint, {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    return response.data;
+  } catch(error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 404) {
+        console.error("Resource not found (404).", error.response.data);
+        // React to 404 specifically
+        return payload
+      }
+    }
+    
+    return { error: "An error occurred", details: error.message };
   }
 };
 

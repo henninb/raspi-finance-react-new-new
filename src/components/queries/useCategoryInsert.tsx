@@ -2,10 +2,10 @@ import { basicAuth } from "../Common";
 import axios, { AxiosError } from "axios";
 import { useMutation, useQueryClient } from "react-query";
 
-const insertDescription = async (descriptionName: any): Promise<any> => {
+const insertCategory = async (categoryName: any): Promise<any> => {
   try {
-    const endpoint = "/api/description/insert";
-    const payload = { description: descriptionName, activeStatus: true };
+    const endpoint = "/api/category/insert";
+    const payload = { category: categoryName, activeStatus: true };
 
     const response = await axios.post(endpoint, payload, {
       timeout: 0,
@@ -15,14 +15,14 @@ const insertDescription = async (descriptionName: any): Promise<any> => {
       },
     });
     return response.data;
-  } catch( error: any) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 404) {
         console.error("Resource not found (404).", error.response.data);
         // React to 404 specifically
         return {
-          descriptionId: Math.random(),
-          descriptionName: descriptionName,
+          categoryId: Math.random(),
+          categoryName: categoryName,
           activeStatus: true,
           dateAdded: new Date(),
           dateUpdated: new Date(),
@@ -32,30 +32,30 @@ const insertDescription = async (descriptionName: any): Promise<any> => {
   }
 };
 
-export default function useDescriptionInsert() {
+export default function useCategoryInsert() {
   const queryClient = useQueryClient();
 
   return useMutation(
-    ["insertDescription"],
-    (variables: any) => insertDescription(variables.descriptionName),
+    ["insertCategory"],
+    (variables: any) => insertCategory(variables.categoryName),
     {
       onError: (error: AxiosError<any>) => {
         console.log(error ? error : "error is undefined.");
         console.log(
-          error.response ? error.response : "error.response is undefined.",
+          error.response ? error.response : "error.response is undefined."
         );
         console.log(
           error.response
             ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
+            : "error.response is undefined - cannot stringify."
         );
       },
 
       onSuccess: (response) => {
-        const oldData: any = queryClient.getQueryData("description");
+        const oldData: any = queryClient.getQueryData("category");
         const newData = [response, ...oldData];
-        queryClient.setQueryData("description", newData);
+        queryClient.setQueryData("category", newData);
       },
-    },
+    }
   );
 }
