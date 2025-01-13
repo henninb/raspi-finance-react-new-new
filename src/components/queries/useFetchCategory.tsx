@@ -20,8 +20,6 @@ import { basicAuth } from "../Common";
 //   return data.categories;
 // };
 
-const dataTest = [{}]
-
 const fetchCategoryData = async (): Promise<any> => {
   try {
     const response = await axios.get("/api/category/select/active", {
@@ -37,8 +35,18 @@ const fetchCategoryData = async (): Promise<any> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching category data:", error);
-    
-    return dataTest;
+    return [
+      {
+      categoryId: Math.random(),
+      categoryName: 'test1',
+      activeStatus: true
+      },
+      {
+        categoryId: Math.random(),
+        categoryName: 'test2',
+        activeStatus: true
+      }
+    ];
   }
 };
 

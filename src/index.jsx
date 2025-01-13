@@ -13,6 +13,7 @@ import TransactionTable from "./components/TransactionTable";
 import Transactions from "./components/Transactions";
 import Login from "./components/Login";
 import Header from "./components/Header";
+import CategoryTable from "./components/CategoryTable";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ createBrowserRouter([
       { path: "/payments", element: <PaymentTable /> },
       { path: "/freeform", element: <FreeForm /> },
       { path: "/configuration", element: <ParameterConfiguration /> },
+      { path: "/categories", element: <CategoryTable /> },
       { path: "/payments/required", element: <PaymentRequired /> },
 
       { path: "/transactions/:account", element: <TransactionTable /> },

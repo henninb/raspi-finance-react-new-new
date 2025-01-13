@@ -10,6 +10,7 @@ import ParameterConfiguration from "./ParameterConfiguration";
 import Login from "./Login";
 import ProtectedRoutes from "./ProtectedRoutes";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CategoryTable from "./CategoryTable";
 
 export default function AllRoutes() {
   const theme = createTheme({
@@ -40,6 +41,7 @@ export default function AllRoutes() {
           <Route path="/login" element={<Login />} />
           <Route element={<ProtectedRoutes />}>
             <Route path="/payments" element={<PaymentTable />} />
+            <Route path="/categories" element={<CategoryTable />} />
             <Route path="/transfers" element={<TransferTable />} />
             <Route path="/freeform" element={<FreeForm />} />
             <Route path="/payments/required" element={<PaymentRequired />} />
