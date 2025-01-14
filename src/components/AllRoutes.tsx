@@ -12,6 +12,7 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CategoryTable from "./CategoryTable";
 import DescriptionTable from "./DescriptionTable";
+import NotFound from "./NotFound";
 
 export default function AllRoutes() {
   const theme = createTheme({
@@ -57,6 +58,7 @@ export default function AllRoutes() {
               element={<Transactions />}
             />
             <Route path="/" element={<AccountSummaryTable />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </ThemeProvider>

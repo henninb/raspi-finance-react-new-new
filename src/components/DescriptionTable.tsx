@@ -81,13 +81,13 @@ export default function DescriptionTable() {
     },
   ];
 
-  const handleAddRow = () => {
-    return {
-      descriptionId: Math.random(),
-      descriptionName: "",
-      activeStatus: true,
-    };
-  };
+  // const handleAddRow = () => {
+  //   return {
+  //     descriptionId: Math.random(),
+  //     descriptionName: "",
+  //     activeStatus: true,
+  //   };
+  // };
 
   return (
     <div>
@@ -97,7 +97,7 @@ export default function DescriptionTable() {
           <IconButton
             onClick={() => {
               setOpenForm(true);
-              setDescriptionData(handleAddRow());
+              //setDescriptionData(handleAddRow());
             }}
             style={{ marginLeft: 8 }}
           >

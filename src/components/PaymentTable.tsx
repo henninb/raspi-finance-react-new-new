@@ -64,18 +64,18 @@ export default function PaymentTable() {
     history("/transactions/" + rowData.accountNameOwner);
   };
 
-  const handleAddRow = () => {
-    return {
-      paymentId: Math.random(),
-      accountNameOwner: "",
-      //destinationAccount: "",
-      transactionDate: new Date(),
-      amount: 0.0,
-      //guidSource: "",
-      //guidDestination: "",
-      activeStatus: true,
-    };
-  }
+  // const handleAddRow = () => {
+  //   return {
+  //     paymentId: Math.random(),
+  //     accountNameOwner: "",
+  //     //destinationAccount: "",
+  //     transactionDate: new Date(),
+  //     amount: 0.0,
+  //     //guidSource: "",
+  //     //guidDestination: "",
+  //     activeStatus: true,
+  //   };
+  // }
 
   const handleDeleteRow = async (payment: Payment) => {
     //console.log("payment: " + JSON.stringify(payment))
@@ -107,17 +107,8 @@ export default function PaymentTable() {
 
   const addRow = async (newData: Payment): Promise<string> => {
     try {
-      const paymentData = {
-        ...newData,
-        //sourceAccount: newData.sourceAccount || "",
-        //destinationAccount: newData.destinationAccount || "",
-        // TODO: bh for testing purposes, need to remove them 1/10/2025
-        // guidSource: "00a8a750-cc3d-4c24-9263-c85af59cab64",
-        // guidDestination: "00a8a750-cc3d-4c24-9263-c85af59cab64",
-        // activeStatus: true
-      };
-      console.log("paymentData: " + JSON.stringify(paymentData));
-      await insertPayment({ payload: paymentData });
+      console.log("paymentData: " + JSON.stringify(newData));
+      await insertPayment({ payload: newData });
       return "success";
     } catch (error) {
       handleError(error, "addRow", false);
@@ -220,7 +211,7 @@ export default function PaymentTable() {
               //onClick={handleAddRow} 
               onClick={() => {
                 setOpenForm(true)
-                return handleAddRow
+                //return handleAddRow
                 }
               } 
               style={{ marginLeft: 8 }}>

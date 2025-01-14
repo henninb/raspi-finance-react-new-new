@@ -344,7 +344,6 @@ export default function TransactionTable() {
           <div>
             <IconButton
                 onClick={() => {
-                  //setParameterData(params.row);
                   setOpenForm(true);
                 }}
             >

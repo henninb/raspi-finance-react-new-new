@@ -104,7 +104,7 @@ export default function CategoryTable() {
         <div data-testid="category-table">
           <IconButton
             onClick={() => {
-              //setOpenForm(true);
+              setOpenForm(true);
               //setCategoryData(handleAddRow());
             }
           }
@@ -151,7 +151,7 @@ export default function CategoryTable() {
           <h3>{categoryData ? "Edit Category" : "Add New Category"}</h3>
 
           <TextField
-            label="Category Name"
+            label="Category"
             value={categoryData?.categoryName || ""}
             onChange={(e) =>
               setCategoryData((prev: any) => ({ ...prev, categoryName: e.target.value }))

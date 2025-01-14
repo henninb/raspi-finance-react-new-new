@@ -155,18 +155,18 @@ export default function TransferTable() {
     },
   ];
 
-  const handleAddRow = () => {
-    return {
-      transferId: Math.random(),
-      sourceAccount: "",
-      destinationAccount: "",
-      transactionDate: new Date(),
-      amount: 0.0,
-      guidSource: "",
-      guidDestination: "",
-      activeStatus: true,
-    };
-  };
+  // const handleAddRow = () => {
+  //   return {
+  //     transferId: Math.random(),
+  //     sourceAccount: "",
+  //     destinationAccount: "",
+  //     transactionDate: new Date(),
+  //     amount: 0.0,
+  //     guidSource: "",
+  //     guidDestination: "",
+  //     activeStatus: true,
+  //   };
+  // };
 
   return (
     <div>
@@ -176,7 +176,7 @@ export default function TransferTable() {
             <IconButton 
               onClick={() => {
                 setOpenForm(true)
-                return handleAddRow
+                //return handleAddRow
                 }
               } 
               style={{ marginLeft: 8 }}>
