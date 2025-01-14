@@ -54,13 +54,13 @@ export default function DescriptionTable() {
 
   const columns: GridColDef[] = [
     {
-      field: "descriptionText",
-      headerName: "Description Text",
+      field: "descriptionName",
+      headerName: "Description",
       width: 200,
       editable: true,
     },
     {
-      field: "status",
+      field: "activeStatus",
       headerName: "Status",
       width: 100,
       editable: true,
@@ -142,7 +142,7 @@ export default function DescriptionTable() {
           <h3>{descriptionData ? "Edit Description" : "Add New Description"}</h3>
 
           <TextField
-            label="Description Text"
+            label="Description"
             value={descriptionData?.descriptionName || ""}
             onChange={(e) =>
               setDescriptionData((prev: any) => ({
