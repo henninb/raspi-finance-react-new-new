@@ -1,24 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { useQuery } from "react-query";
-//import { gql } from "@apollo/client";
-//import { ApolloError } from "apollo-client";
-//import { apolloClient } from "../ApolloClient";
 import { basicAuth } from "../Common";
-
-// const query = gql`
-//   query {
-//     categories {
-//       categoryName
-//     }
-//   }
-// `;
-
-// const graphqlCategoryData = async () => {
-//   const client = apolloClient();
-//   const { data } = await client.query({ query });
-//   console.log("fetching categories");
-//   return data.categories;
-// };
 
 const fetchCategoryData = async (): Promise<any> => {
   try {
@@ -49,15 +31,6 @@ const fetchCategoryData = async (): Promise<any> => {
     ];
   }
 };
-
-// export default function useFetchCategory() {
-//   return useQuery("category", () => fetchCategoryData(), {
-//     onError: (error: ApolloError) => {
-//       console.log("graphql error with category");
-//       //console.log(error ? error : "error is undefined.");
-//     },
-//   });
-// }
 
 export default function useFetchCategory() {
   return useQuery("category", () => fetchCategoryData(), {

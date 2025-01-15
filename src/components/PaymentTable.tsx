@@ -18,7 +18,7 @@ import MomentUtils from "@date-io/moment";
 import useFetchPayment from "./queries/useFetchPayment";
 import usePaymentInsert from "./queries/usePaymentInsert";
 import usePaymentDelete from "./queries/usePaymentDelete";
-import useFetchParameter from "./queries/useFetchParameter";
+import useFetchParameter from "./queries/useFetchParameters";
 import Payment from "./model/Payment";
 import Transaction from "./model/Transaction";
 import { GridValueFormatter } from '@mui/x-data-grid';
@@ -46,7 +46,7 @@ export default function PaymentTable() {
   const history = useNavigate();
   const { data, isSuccess } = useFetchPayment();
   const { data: parameterData, isSuccess: parameterSuccess } =
-    useFetchParameter("payment_account");
+    useFetchParameter();
   const { mutate: insertPayment } = usePaymentInsert();
   const { mutate: deletePayment } = usePaymentDelete();
 
@@ -152,17 +152,31 @@ export default function PaymentTable() {
       headerName: "Source Account",
       width: 180,
       editable: true,
-      renderCell: (params) => parameterData?.parameterValue || "none",
+      renderCell: (params) => {
+        const parameter = parameterData?.find((param: any) => param.parameterName === 'payment_account');
+        return parameter ? parameter.parameterValue : "none";
+      },
       renderEditCell: (params: any) => (
         <SelectAccountNameOwnerDebit
-          onChangeFunction={(value: any) =>
+          onChangeFunction={(value: any) => {
             params.api
               .getCellEditorInstances()
-              .forEach((editor: any) => editor.setValue("parameterData.parameterValue"))
-          }
+              .forEach((editor: any) => editor.setValue(value));
+          }}
           currentValue={params.value || ""}
         />
       ),
+
+      // renderEditCell: (params: any) => (
+      //   <SelectAccountNameOwnerDebit
+      //     onChangeFunction={(value: any) =>
+      //       params.api
+      //         .getCellEditorInstances()
+      //         .forEach((editor: any) => editor.setValue("parameterData.parameterValue"))
+      //     }
+      //     currentValue={params.value || ""}
+      //   />
+      // ),
     },
     {
       field: "accountNameOwner",
