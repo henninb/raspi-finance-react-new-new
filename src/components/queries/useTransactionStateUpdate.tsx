@@ -1,8 +1,13 @@
 import axios, { AxiosError } from "axios";
 import { basicAuth } from "../Common";
 import { useMutation, useQueryClient } from "react-query";
-import { getAccountKey } from "./KeyFile";
 import { TransactionState } from "../model/TransactionState";
+
+
+const getAccountKey = (accountNameOwner: string) => [
+  "accounts",
+  accountNameOwner,
+];  
 
 const changeTransactionState = async (
   guid: string,

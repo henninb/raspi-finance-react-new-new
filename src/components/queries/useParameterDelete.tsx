@@ -1,8 +1,9 @@
 import { basicAuth } from "../Common";
 import axios, { AxiosError } from "axios";
 import { useMutation, useQueryClient } from "react-query";
+import Parameter from "../model/Parameter";
 
-const deleteParameter = async (payload: any): Promise<any> => {
+const deleteParameter = async (payload: Parameter): Promise<Parameter> => {
   try {
   // TODO: change the word parm to the actual path.
   const endpoint = "/api/parm/delete/" + payload.parameterName;
@@ -16,7 +17,8 @@ const deleteParameter = async (payload: any): Promise<any> => {
   });
   return response.data;
   } catch(error) {
-    return [{}]
+    console.error("Error in deleteParameter:", error);
+    throw error;
   }
 };
 

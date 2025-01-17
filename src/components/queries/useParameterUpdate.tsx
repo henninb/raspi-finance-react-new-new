@@ -7,7 +7,7 @@ import Parameter from "../model/Parameter";
 const updateParameter = async (
   newData: Parameter,
   oldData: Parameter,
-): Promise<any> => {
+): Promise<Parameter> => {
   const endpoint = "/api/parm/update/" + oldData.parameterName;
 
   console.log(newData);

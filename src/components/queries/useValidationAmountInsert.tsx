@@ -6,20 +6,21 @@ import ValidationAmount from "../model/ValidationAmount";
 const insertValidationAmount = async (
   accountNameOwner: string,
   payload: ValidationAmount,
-): Promise<any> => {
+): Promise<ValidationAmount> => {
   try {
-  const endpoint = "/api/validation/amount/insert/" + accountNameOwner;
+    const endpoint = "/api/validation/amount/insert/" + accountNameOwner;
 
-  const response = await axios.post(endpoint, payload, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  return response.data;
+    const response = await axios.post(endpoint, payload, {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    return response.data;
   } catch(error) {
-    return "success"
+      console.error("An error occurred:", error);
+      throw error;
   }
 };
 
