@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { IconButton, Modal, Box, Button, TextField } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/DeleteRounded';
-import EditIcon from '@mui/icons-material/CreateRounded';
-import AddIcon from '@mui/icons-material/AddRounded';
+import DeleteIcon from "@mui/icons-material/DeleteRounded";
+import EditIcon from "@mui/icons-material/CreateRounded";
+import AddIcon from "@mui/icons-material/AddRounded";
 import useFetchParameters from "./queries/useFetchParameters";
 import useParameterDelete from "./queries/useParameterDelete";
 import useParameterUpdate from "./queries/useParameterUpdate";
@@ -61,7 +61,7 @@ export default function ParameterConfiguration() {
               setOpenForm(true);
             }}
           >
-           <EditIcon />
+            <EditIcon />
           </IconButton>
           <IconButton onClick={() => handleDelete(params.row)}>
             <DeleteIcon />
@@ -80,15 +80,15 @@ export default function ParameterConfiguration() {
         </div>
       ) : (
         <div>
-            <IconButton 
-              onClick={() => {
-                setOpenForm(true)
-                //return handleAddRow
-                }
-              } 
-              style={{ marginLeft: 8 }}>
-              <AddIcon />
-            </IconButton>
+          <IconButton
+            onClick={() => {
+              setOpenForm(true);
+              //return handleAddRow
+            }}
+            style={{ marginLeft: 8 }}
+          >
+            <AddIcon />
+          </IconButton>
           <DataGrid
             columns={columns}
             rows={data}
@@ -106,14 +106,25 @@ export default function ParameterConfiguration() {
         aria-labelledby="form-modal"
         aria-describedby="form-modal-description"
       >
-        <Box sx={{ width: 400, padding: 4, backgroundColor: "white", margin: "auto", top: "20%" }}>
+        <Box
+          sx={{
+            width: 400,
+            padding: 4,
+            backgroundColor: "white",
+            margin: "auto",
+            top: "20%",
+          }}
+        >
           <h3>{parameterData ? "Edit Parameter" : "Add New Parameter"}</h3>
 
           <TextField
             label="Parameter Name"
             value={parameterData?.parameterName || ""}
             onChange={(e) =>
-              setParameterData((prev: any) => ({ ...prev, parameterName: e.target.value }))
+              setParameterData((prev: any) => ({
+                ...prev,
+                parameterName: e.target.value,
+              }))
             }
             fullWidth
             margin="normal"
@@ -123,7 +134,10 @@ export default function ParameterConfiguration() {
             label="Parameter Value"
             value={parameterData?.parameterValue || ""}
             onChange={(e) =>
-              setParameterData((prev:any) => ({ ...prev, parameterValue: e.target.value }))
+              setParameterData((prev: any) => ({
+                ...prev,
+                parameterValue: e.target.value,
+              }))
             }
             fullWidth
             margin="normal"

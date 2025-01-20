@@ -14,15 +14,15 @@ const deleteAccount = async (payload: any): Promise<any> => {
       },
     });
     return response.data;
-  } catch(error: any) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 404) {
         console.error("Resource not found (404).", error.response.data);
         // React to 404 specifically
-        return payload
+        return payload;
       }
     }
-    
+
     return { error: "An error occurred", details: error.message };
   }
 };

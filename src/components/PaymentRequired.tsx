@@ -92,16 +92,15 @@ export default function PaymentRequired() {
 
   return (
     <div>
-       <h2>Payment Required Details</h2>
-      {!showSpinner ?
-      (
+      <h2>Payment Required Details</h2>
+      {!showSpinner ? (
         <div data-testid="payment-required-table">
           <DataGrid
             columns={columns}
             rows={data}
             paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
-            getRowId={(row:any) => row.accountNameOwner}
+            getRowId={(row: any) => row.accountNameOwner}
           />
         </div>
       ) : (
@@ -111,4 +110,4 @@ export default function PaymentRequired() {
       )}
     </div>
   );
-};
+}

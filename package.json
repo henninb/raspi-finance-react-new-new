@@ -93,7 +93,6 @@
     "axios-mock-adapter": "^2.1.0",
     "babel-jest": "^29.7.0",
     "cypress": "^13.17.0",
-    "eslint-plugin-cypress": "^4.1.0",
     "headers-polyfill": "^4.0.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",

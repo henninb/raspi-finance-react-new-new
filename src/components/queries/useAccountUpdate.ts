@@ -18,15 +18,15 @@ const updateAccount = async (
       },
     });
     return response.data;
-  } catch(error: any) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 404) {
         console.error("Resource not found (404).", error.response.data);
         // React to 404 specifically
-        return newRow
+        return newRow;
       }
     }
-    
+
     return { error: "An error occurred", details: error.message };
   }
 };
@@ -50,7 +50,7 @@ export default function useAccountUpdate() {
         );
       },
 
-      onSuccess: (response : any) => {
+      onSuccess: (response: any) => {
         const oldData = queryClient.getQueryData<Account[]>("account");
 
         if (oldData) {

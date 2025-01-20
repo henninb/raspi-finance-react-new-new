@@ -2,14 +2,16 @@ import axios, { AxiosError } from "axios";
 import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
 
-const dataTest = [{
-  "validationId": 2085,
-  "accountId": 1023,
-  "validationDate": 1736459500288,
-  "activeStatus": true,
-  "transactionState": "cleared",
-  "amount": 60.00
-}]
+const dataTest = [
+  {
+    validationId: 2085,
+    accountId: 1023,
+    validationDate: 1736459500288,
+    activeStatus: true,
+    transactionState: "cleared",
+    amount: 60.0,
+  },
+];
 
 const fetchValidationAmountData = async (
   accountNameOwner: string,
@@ -28,9 +30,9 @@ const fetchValidationAmountData = async (
     );
     //console.debug(JSON.stringify(response.data));
     return response.data;
-  }  catch(error) {
+  } catch (error) {
     console.error("Error fetching validationAmount data:", error);
-    return dataTest
+    return dataTest;
   }
 };
 

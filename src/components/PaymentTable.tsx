@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import SelectAccountNameOwnerCredit from "./SelectAccountNameOwnerCredit";
 import SelectAccountNameOwnerDebit from "./SelectAccountNameOwnerDebit";
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import UpdateIcon from '@mui/icons-material/Check';
-import IconButton from '@mui/material/IconButton';
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import UpdateIcon from "@mui/icons-material/Check";
+import IconButton from "@mui/material/IconButton";
 import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -21,7 +21,7 @@ import usePaymentDelete from "./queries/usePaymentDelete";
 import useFetchParameter from "./queries/useFetchParameters";
 import Payment from "./model/Payment";
 import Transaction from "./model/Transaction";
-import { GridValueFormatter } from '@mui/x-data-grid';
+import { GridValueFormatter } from "@mui/x-data-grid";
 import { Modal } from "@mui/material";
 import { Box } from "@mui/material";
 import { Button } from "@mui/material";
@@ -30,7 +30,7 @@ export default function PaymentTable() {
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
-  const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
+  const [openForm, setOpenForm] = useState<boolean>(false); // State to control the form overlay
   const [paymentData, setTransferData] = useState<Payment | null>(null); // State to store the data being edited
 
   const [newRow, setNewRow] = useState({
@@ -128,7 +128,9 @@ export default function PaymentTable() {
       valueGetter: (params: string) => {
         //console.log("date-in:" + params)
         const utcDate = new Date(params);
-        const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+        const localDate = new Date(
+          utcDate.getTime() + utcDate.getTimezoneOffset() * 60000,
+        );
         //console.log("localDate: " + localDate);
         return localDate;
       },
@@ -153,7 +155,9 @@ export default function PaymentTable() {
       width: 180,
       editable: true,
       renderCell: (params) => {
-        const parameter = parameterData?.find((param: any) => param.parameterName === 'payment_account');
+        const parameter = parameterData?.find(
+          (param: any) => param.parameterName === "payment_account",
+        );
         return parameter ? parameter.parameterValue : "none";
       },
       renderEditCell: (params: any) => (
@@ -201,14 +205,13 @@ export default function PaymentTable() {
       width: 120,
       renderCell: (params) => (
         <div>
-        <IconButton       
-          onClick={() => {
-            handleDeleteRow(params.row)
-          }
-          }
-        >
-          <DeleteIcon />
-        </IconButton>
+          <IconButton
+            onClick={() => {
+              handleDeleteRow(params.row);
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
         </div>
       ),
     },
@@ -216,30 +219,28 @@ export default function PaymentTable() {
 
   return (
     <div>
-       <h2>Payment Details</h2>
-      {!showSpinner ?
-      (
+      <h2>Payment Details</h2>
+      {!showSpinner ? (
         <div data-testid="payment-table">
-                      
-            <IconButton 
-              //onClick={handleAddRow} 
-              onClick={() => {
-                setOpenForm(true)
-                //return handleAddRow
-                }
-              } 
-              style={{ marginLeft: 8 }}>
-              <AddIcon />
-            </IconButton>
+          <IconButton
+            //onClick={handleAddRow}
+            onClick={() => {
+              setOpenForm(true);
+              //return handleAddRow
+            }}
+            style={{ marginLeft: 8 }}
+          >
+            <AddIcon />
+          </IconButton>
           <DataGrid
             columns={columns}
             rows={data}
             pagination
             //paginationModel={{ pageSize: 40, page: 0 }}
-            getRowId={(row:any) => row.paymentId}
+            getRowId={(row: any) => row.paymentId}
             //editMode="cell"
             //hideFooterPagination={true}
-            checkboxSelection={false}  // Disabling row selection (checkboxes)
+            checkboxSelection={false} // Disabling row selection (checkboxes)
             rowSelection={false}
             //experimentalFeatures={{ newEditingApi: true }}
             // sx={{
@@ -263,21 +264,34 @@ export default function PaymentTable() {
         </div>
       )}
 
-{/* Form Overlay for Adding/Editing Payment */}
-<Modal
+      {/* Form Overlay for Adding/Editing Payment */}
+      <Modal
         open={openForm}
         onClose={() => setOpenForm(false)}
         aria-labelledby="form-modal"
         aria-describedby="form-modal-description"
       >
-        <Box sx={{ width: 400, padding: 4, backgroundColor: "white", margin: "auto", top: "20%" }}>
+        <Box
+          sx={{
+            width: 400,
+            padding: 4,
+            backgroundColor: "white",
+            margin: "auto",
+            top: "20%",
+          }}
+        >
           <h3>{paymentData ? "Edit Payment" : "Add New Payment"}</h3>
 
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
               label="Transaction Date"
               //value={paymentData?.transactionDate || null}
-              onChange={(newValue) => setTransferData((prev: any) => ({ ...prev, transactionDate: newValue }))}
+              onChange={(newValue) =>
+                setTransferData((prev: any) => ({
+                  ...prev,
+                  transactionDate: newValue,
+                }))
+              }
               //renderInput={(props: any) => <TextField {...props} fullWidth margin="normal" />}
             />
           </LocalizationProvider>
@@ -299,7 +313,10 @@ export default function PaymentTable() {
 
           <SelectAccountNameOwnerCredit
             onChangeFunction={(value: string) =>
-              setTransferData((prev: any) => ({ ...prev, accountNameOwner: value }))
+              setTransferData((prev: any) => ({
+                ...prev,
+                accountNameOwner: value,
+              }))
             }
             currentValue={paymentData?.accountNameOwner || ""}
           />
@@ -351,7 +368,6 @@ export default function PaymentTable() {
           </div>
         </Box>
       </Modal>
-
     </div>
   );
 }

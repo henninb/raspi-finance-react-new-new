@@ -15,7 +15,9 @@ export default function DescriptionTable() {
   const [open, setOpen] = useState<boolean>(false);
   const [showSpinner, setShowSpinner] = useState(true);
   const [openForm, setOpenForm] = useState<boolean>(false);
-  const [descriptionData, setDescriptionData] = useState<Description | null>(null);
+  const [descriptionData, setDescriptionData] = useState<Description | null>(
+    null,
+  );
 
   const { data, isSuccess } = useFetchDescription();
   const { mutate: insertDescription } = useDescriptionInsert();
@@ -72,8 +74,11 @@ export default function DescriptionTable() {
       width: 120,
       renderCell: (params) => (
         <div>
-          <IconButton onClick={() => {//handleDeleteRow(params.row)
-          }}>
+          <IconButton
+            onClick={() => {
+              //handleDeleteRow(params.row)
+            }}
+          >
             <DeleteIcon />
           </IconButton>
         </div>
@@ -139,7 +144,9 @@ export default function DescriptionTable() {
             top: "20%",
           }}
         >
-          <h3>{descriptionData ? "Edit Description" : "Add New Description"}</h3>
+          <h3>
+            {descriptionData ? "Edit Description" : "Add New Description"}
+          </h3>
 
           <TextField
             label="Description"

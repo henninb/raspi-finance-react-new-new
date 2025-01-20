@@ -7,29 +7,29 @@ import Transaction from "../model/Transaction";
 const updateTransaction = async (
   newData: Transaction,
   oldData: Transaction,
-): Promise<any> => {
+): Promise<Transaction> => {
   try {
-  const endpoint = "/api/transaction/update/" + oldData.guid;
+    const endpoint = "/api/transaction/update/" + oldData.guid;
 
-  if (newData.receiptImage !== undefined) {
-    newData["receiptImage"].image = newData["receiptImage"].image.replace(
-      /^data:image\/[a-z]+;base64,/,
-      "",
-    );
-  }
-  console.log("newData:" + JSON.stringify(newData));
+    if (newData.receiptImage !== undefined) {
+      newData["receiptImage"].image = newData["receiptImage"].image.replace(
+        /^data:image\/[a-z]+;base64,/,
+        "",
+      );
+    }
+    console.log("newData:" + JSON.stringify(newData));
 
-  const response = await axios.put(endpoint, newData, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  return response.data;
+    const response = await axios.put(endpoint, newData, {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    return response.data;
   } catch (error) {
-    return newData
+    return newData;
   }
 };
 

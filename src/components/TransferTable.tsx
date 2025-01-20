@@ -11,20 +11,19 @@ import useFetchTransfer from "./queries/useFetchTransfer";
 import useTransferInsert from "./queries/useTransferInsert";
 import useTransferDelete from "./queries/useTransferDelete";
 import Transfer from "./model/Transfer";
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/AddRounded';
-import IconButton from '@mui/material/IconButton';
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/AddRounded";
+import IconButton from "@mui/material/IconButton";
 import { Modal } from "@mui/material";
-import {Box} from "@mui/material";
-import {Button} from "@mui/material";
+import { Box } from "@mui/material";
+import { Button } from "@mui/material";
 
 export default function TransferTable() {
   const [message, setMessage] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [showSpinner, setShowSpinner] = useState(true);
-  const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
+  const [openForm, setOpenForm] = useState<boolean>(false); // State to control the form overlay
   const [transferData, setTransferData] = useState<Transfer | null>(null); // State to store the data being edited
-
 
   const { data, isSuccess } = useFetchTransfer();
   const { mutate: insertTransfer } = useTransferInsert();
@@ -61,7 +60,7 @@ export default function TransferTable() {
         // TODO: bh for testing purposes, need to remove them 1/10/2025
         guidSource: "00a8a750-cc3d-4c24-9263-c85af59cab64",
         guidDestination: "00a8a750-cc3d-4c24-9263-c85af59cab64",
-        activeStatus: true
+        activeStatus: true,
       };
       console.log("transferData: " + JSON.stringify(transferData));
       await insertTransfer({ payload: transferData });
@@ -84,7 +83,9 @@ export default function TransferTable() {
       valueGetter: (params: string) => {
         //console.log("date-in:" + params)
         const utcDate = new Date(params);
-        const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+        const localDate = new Date(
+          utcDate.getTime() + utcDate.getTimezoneOffset() * 60000,
+        );
         //console.log("localDate: " + localDate);
         return localDate;
       },
@@ -142,11 +143,10 @@ export default function TransferTable() {
       width: 120,
       renderCell: (params) => (
         <div>
-          <IconButton       
+          <IconButton
             onClick={() => {
-              handleDeleteRow(params.row)
-            }
-            }
+              handleDeleteRow(params.row);
+            }}
           >
             <DeleteIcon />
           </IconButton>
@@ -170,37 +170,37 @@ export default function TransferTable() {
 
   return (
     <div>
-       <h2>Transfer Details</h2>
-      { !showSpinner ? (
+      <h2>Transfer Details</h2>
+      {!showSpinner ? (
         <div data-testid="transfer-table">
-            <IconButton 
-              onClick={() => {
-                setOpenForm(true)
-                //return handleAddRow
-                }
-              } 
-              style={{ marginLeft: 8 }}>
-              <AddIcon />
-            </IconButton>
+          <IconButton
+            onClick={() => {
+              setOpenForm(true);
+              //return handleAddRow
+            }}
+            style={{ marginLeft: 8 }}
+          >
+            <AddIcon />
+          </IconButton>
           <DataGrid
             columns={columns}
             rows={data}
             //autoPageSize
             //checkboxSelection
             getRowId={(row: Transfer) => row.transferId}
-            processRowUpdate={(newRow :any, oldRow: any) => {
+            processRowUpdate={(newRow: any, oldRow: any) => {
               // Handle row update here
-              console.log('Row updated:', newRow);
+              console.log("Row updated:", newRow);
               return newRow; // Return the updated row
             }}
           />
-            <div>
-              <SnackbarBaseline
-                message={message}
-                state={open}
-                handleSnackbarClose={handleSnackbarClose}
-              />
-            </div>
+          <div>
+            <SnackbarBaseline
+              message={message}
+              state={open}
+              handleSnackbarClose={handleSnackbarClose}
+            />
+          </div>
         </div>
       ) : (
         <div className="centered">
@@ -208,28 +208,44 @@ export default function TransferTable() {
         </div>
       )}
 
- {/* Form Overlay for Adding/Editing Transfer */}
- <Modal
+      {/* Form Overlay for Adding/Editing Transfer */}
+      <Modal
         open={openForm}
         onClose={() => setOpenForm(false)}
         aria-labelledby="form-modal"
         aria-describedby="form-modal-description"
       >
-        <Box sx={{ width: 400, padding: 4, backgroundColor: "white", margin: "auto", top: "20%" }}>
+        <Box
+          sx={{
+            width: 400,
+            padding: 4,
+            backgroundColor: "white",
+            margin: "auto",
+            top: "20%",
+          }}
+        >
           <h3>{transferData ? "Edit Transfer" : "Add New Transfer"}</h3>
 
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
               label="Transaction Date"
               //value={transferData?.transactionDate || null}
-              onChange={(newValue) => setTransferData((prev: any) => ({ ...prev, transactionDate: newValue }))}
+              onChange={(newValue) =>
+                setTransferData((prev: any) => ({
+                  ...prev,
+                  transactionDate: newValue,
+                }))
+              }
               //renderInput={(props: any) => <TextField {...props} fullWidth margin="normal" />}
             />
           </LocalizationProvider>
 
           <SelectAccountNameOwnerDebit
             onChangeFunction={(value: string) =>
-              setTransferData((prev: any) => ({ ...prev, sourceAccount: value }))
+              setTransferData((prev: any) => ({
+                ...prev,
+                sourceAccount: value,
+              }))
             }
             currentValue={transferData?.sourceAccount || ""}
           />
@@ -244,7 +260,10 @@ export default function TransferTable() {
 
           <SelectAccountNameOwnerDebit
             onChangeFunction={(value: string) =>
-              setTransferData((prev: any) => ({ ...prev, destinationAccount: value }))
+              setTransferData((prev: any) => ({
+                ...prev,
+                destinationAccount: value,
+              }))
             }
             currentValue={transferData?.destinationAccount || ""}
           />

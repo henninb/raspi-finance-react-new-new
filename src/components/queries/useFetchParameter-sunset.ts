@@ -2,10 +2,9 @@ import axios, { AxiosError } from "axios";
 import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
 
-
 const dataTest = [
-  {"parameterName": "payment_account", "parameterValue": "wfargo_brian"}
-]
+  { parameterName: "payment_account", parameterValue: "wfargo_brian" },
+];
 
 const fetchParameterData = async (parameterName: any): Promise<any> => {
   try {
@@ -22,7 +21,7 @@ const fetchParameterData = async (parameterName: any): Promise<any> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching parameter data:", error);
-    return dataTest
+    return dataTest;
   }
 };
 

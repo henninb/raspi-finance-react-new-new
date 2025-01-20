@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "react-query";
 import Account from "../model/Account";
 
 const setupNewAccount = (payload: Account) => {
-
   return {
     accountNameOwner: payload.accountNameOwner,
     accountType: payload.accountType,
@@ -15,8 +14,8 @@ const setupNewAccount = (payload: Account) => {
     dateClosed: new Date(0),
     dateAdded: new Date(),
     dateUpdated: new Date(),
-    activeStatus:true,
-  }
+    activeStatus: true,
+  };
 };
 
 const insertAccount = async (payload: Account): Promise<any> => {
@@ -32,7 +31,7 @@ const insertAccount = async (payload: Account): Promise<any> => {
       },
     });
     return response.data;
-  } catch(error: any) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 404) {
         console.error("Resource not found (404).", error.response.data);
@@ -48,11 +47,11 @@ const insertAccount = async (payload: Account): Promise<any> => {
           dateClosed: new Date(0),
           dateAdded: new Date(),
           dateUpdated: new Date(),
-          activeStatus:true,
+          activeStatus: true,
         };
       }
     }
-    
+
     return { error: "An error occurred", details: error.message };
   }
 };

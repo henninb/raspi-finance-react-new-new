@@ -1,11 +1,11 @@
 import { basicAuth } from "../Common";
 import axios, { AxiosError } from "axios";
 import { useMutation, useQueryClient } from "react-query";
-import Transfer from "../model/Transfer";
+import Payment from "../model/Payment";
 
-const deleteTransfer = async (payload: Transfer): Promise<string> => {
+const deletePayment = async (payload: Payment): Promise<string> => {
   try {
-    const endpoint = "/api/transfer/delete/" + payload.transferId;
+    const endpoint = "/api/payment/delete/" + payload?.paymentId;
 
     const response = await axios.delete(endpoint, {
       timeout: 0,
@@ -15,17 +15,17 @@ const deleteTransfer = async (payload: Transfer): Promise<string> => {
       },
     });
     return response.data;
-  } catch(error) {
+  } catch (error) {
     return JSON.stringify(payload);
   }
 };
 
-export default function useTransferDelete() {
+export default function usePaymentDelete() {
   const queryClient = useQueryClient();
 
   return useMutation(
-    ["deleteTransfer"],
-    (variables: any) => deleteTransfer(variables.oldRow),
+    ["deletePayment"],
+    (variables: any) => deletePayment(variables.oldRow),
     {
       onError: (error: AxiosError<any>) => {
         console.log(error ? error : "error is undefined.");
@@ -40,11 +40,11 @@ export default function useTransferDelete() {
       },
 
       onSuccess: (_response, variables) => {
-        const oldData: any = queryClient.getQueryData("transfer");
-        const newData = oldData.filter(
-          (t: any) => t.transferId !== variables.oldRow.transferId,
-        );
-        queryClient.setQueryData("transfer", newData);
+        const oldData: any = queryClient.getQueryData("payment");
+        const newData = oldData.filter((t: any) => {
+          return t.paymentId !== variables.oldRow.paymentId;
+        });
+        queryClient.setQueryData("payment", newData);
       },
     },
   );

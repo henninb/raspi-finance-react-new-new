@@ -1,31 +1,31 @@
 import { basicAuth } from "../Common";
 import axios, { AxiosError } from "axios";
 import { useMutation, useQueryClient } from "react-query";
-import Payment from "../model/Payment";
+import Transfer from "../model/Transfer";
 
-const deletePayment = async (payload: Payment): Promise<string> => {
+const deleteTransfer = async (payload: Transfer): Promise<string> => {
   try {
-  const endpoint = "/api/payment/delete/" + payload?.paymentId;
+    const endpoint = "/api/transfer/delete/" + payload.transferId;
 
-  const response = await axios.delete(endpoint, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  return response.data;
-  } catch(error) {
+    const response = await axios.delete(endpoint, {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    return response.data;
+  } catch (error) {
     return JSON.stringify(payload);
   }
 };
 
-export default function usePaymentDelete() {
+export default function useTransferDelete() {
   const queryClient = useQueryClient();
 
   return useMutation(
-    ["deletePayment"],
-    (variables: any) => deletePayment(variables.oldRow),
+    ["deleteTransfer"],
+    (variables: any) => deleteTransfer(variables.oldRow),
     {
       onError: (error: AxiosError<any>) => {
         console.log(error ? error : "error is undefined.");
@@ -40,13 +40,11 @@ export default function usePaymentDelete() {
       },
 
       onSuccess: (_response, variables) => {
-        const oldData: any = queryClient.getQueryData("payment");
+        const oldData: any = queryClient.getQueryData("transfer");
         const newData = oldData.filter(
-           (t: any) => {
-            return t.paymentId !== variables.oldRow.paymentId;
-          }
+          (t: any) => t.transferId !== variables.oldRow.transferId,
         );
-        queryClient.setQueryData("payment", newData);
+        queryClient.setQueryData("transfer", newData);
       },
     },
   );

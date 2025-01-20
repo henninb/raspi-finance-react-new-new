@@ -1,10 +1,10 @@
 import axios, { AxiosError } from "axios";
-import { basicAuth } from "../Common";
 import { useQuery } from "react-query";
+import { basicAuth } from "../Common";
 
-const fetchParameterData = async (): Promise<any> => {
+const fetchCategoryData = async (): Promise<any> => {
   try {
-    const response = await axios.get("/api/parm/select/active", {
+    const response = await axios.get("/api/category/select/active", {
       timeout: 0,
       headers: {
         "Content-Type": "application/json",
@@ -16,17 +16,24 @@ const fetchParameterData = async (): Promise<any> => {
     // console.debug(JSON.stringify(response.data));
     return response.data;
   } catch (error) {
-    console.error("Error fetching parameters data:", error);
-    return [{
-      parameterId: Math.random(),
-      parameterName: "payment_account", 
-      parameterValue: "wfargo_brian"
-    }]
+    console.error("Error fetching category data:", error);
+    return [
+      {
+        categoryId: Math.random(),
+        categoryName: "test1",
+        activeStatus: true,
+      },
+      {
+        categoryId: Math.random(),
+        categoryName: "test2",
+        activeStatus: true,
+      },
+    ];
   }
 };
 
-export default function useFetchParameter() {
-  return useQuery("parameter", () => fetchParameterData(), {
+export default function useFetchCategory() {
+  return useQuery("category", () => fetchCategoryData(), {
     onError: (error: AxiosError<any>) => {
       console.log(error ? error : "error is undefined.");
       console.log(

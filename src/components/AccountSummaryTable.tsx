@@ -9,20 +9,20 @@ import useAccountDelete from "./queries/useAccountDelete";
 import useFetchTotals from "./queries/useFetchTotals";
 import Account from "./model/Account";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import IconButton from '@mui/material/IconButton';
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import IconButton from "@mui/material/IconButton";
 import { useMatch, PathMatch } from "react-router-dom";
 import { Modal } from "@mui/material";
-import {Box} from "@mui/material";
-import {Button} from "@mui/material";
-import {TextField} from "@mui/material";
+import { Box } from "@mui/material";
+import { Button } from "@mui/material";
+import { TextField } from "@mui/material";
 
 export default function AccountSummaryTable() {
   const [message, setMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
-  const [openForm, setOpenForm] = useState<boolean>(false);  // State to control the form overlay
+  const [openForm, setOpenForm] = useState<boolean>(false); // State to control the form overlay
   const [accountData, setAccountData] = useState<Account | null>(null); // State to store the data being edited
   const history = useNavigate();
 
@@ -31,11 +31,11 @@ export default function AccountSummaryTable() {
   const { mutate: insertAccount } = useAccountInsert();
   const { mutate: deleteAccount } = useAccountDelete();
 
-   useEffect(() => {
-     if (isSuccess && isSuccessTotals) {
-       setShowSpinner(false);
-     }
-   }, [isSuccess, isSuccessTotals]); 
+  useEffect(() => {
+    if (isSuccess && isSuccessTotals) {
+      setShowSpinner(false);
+    }
+  }, [isSuccess, isSuccessTotals]);
 
   const handleButtonClickLink = (accountNameOwner: string) => {
     history("/transactions/" + accountNameOwner);
@@ -134,14 +134,13 @@ export default function AccountSummaryTable() {
       width: 120,
       renderCell: (params) => (
         <div>
-        <IconButton       
-          onClick={() => {
-            handleDeleteRow(params.row);
-          }
-          }
-        >
-          <DeleteIcon />
-        </IconButton>
+          <IconButton
+            onClick={() => {
+              handleDeleteRow(params.row);
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
         </div>
       ),
     },
@@ -205,44 +204,42 @@ export default function AccountSummaryTable() {
   const handleAddRow = () => {
     return {
       accountId: Math.random(),
-      accountType: 'undefined',
+      accountType: "undefined",
       activeStatus: true,
     };
   };
 
   return (
     <div>
-    <h2>Account Details</h2>
+      <h2>Account Details</h2>
       {!showSpinner ? (
         <div data-testid="account-table">
-            <IconButton 
-              onClick={() => {
-                setOpenForm(true)
-                return handleAddRow
-                }
-              } 
-              style={{ marginLeft: 8 }}>
-              <AddIcon />
-            </IconButton>
+          <IconButton
+            onClick={() => {
+              setOpenForm(true);
+              return handleAddRow;
+            }}
+            style={{ marginLeft: 8 }}
+          >
+            <AddIcon />
+          </IconButton>
 
-        <h2>[ ${currencyFormat(
-              noNaN(totals["totals"]),
-            )} ] [ ${currencyFormat(
-              noNaN(totals["totalsCleared"]),
-            )} ]  [ ${currencyFormat(
-              noNaN(totals["totalsOutstanding"]),
-            )} ] [ ${currencyFormat(noNaN(totals["totalsFuture"]))} ]</h2>
+          <h2>
+            [ ${currencyFormat(noNaN(totals["totals"]))} ] [ $
+            {currencyFormat(noNaN(totals["totalsCleared"]))} ] [ $
+            {currencyFormat(noNaN(totals["totalsOutstanding"]))} ] [ $
+            {currencyFormat(noNaN(totals["totalsFuture"]))} ]
+          </h2>
 
-
-          <DataGrid 
-            columns={columns} 
-            rows={data} 
+          <DataGrid
+            columns={columns}
+            rows={data}
             getRowId={(row) => row.accountId}
             paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
-            processRowUpdate={(newRow :any, oldRow: any) => {
+            processRowUpdate={(newRow: any, oldRow: any) => {
               // Handle row update here
-              console.log('Row updated:', newRow);
+              console.log("Row updated:", newRow);
               return newRow; // Return the updated row
             }}
           />
@@ -260,87 +257,86 @@ export default function AccountSummaryTable() {
         </div>
       )}
 
-{/* Modal for Adding/Editing Account */}
-<Modal
-  open={openForm}
-  onClose={() => setOpenForm(false)}
-  aria-labelledby="account-form-modal"
-  aria-describedby="account-form-modal-description"
->
-  <Box
-    sx={{
-      width: 400,
-      padding: 4,
-      backgroundColor: "white",
-      margin: "auto",
-      top: "20%",
-      position: "relative",
-      boxShadow: 24,
-      borderRadius: 2,
-    }}
-  >
-    <h3>{accountData ? "Edit Account" : "Add New Account"}</h3>
-
-    <TextField
-      label="Account Name Owner"
-      value={accountData?.accountNameOwner || ""}
-      onChange={(e) =>
-        setAccountData((prev: any) => ({
-          ...prev,
-          accountNameOwner: e.target.value,
-        }))
-      }
-      fullWidth
-      margin="normal"
-    />
-
-    <TextField
-      label="Account Type"
-      value={accountData?.accountType || ""}
-      onChange={(e) =>
-        setAccountData((prev: any) => ({
-          ...prev,
-          accountType: e.target.value,
-        }))
-      }
-      fullWidth
-      margin="normal"
-    />
-
-    <TextField
-      label="Moniker"
-      value={accountData?.moniker || ""}
-      onChange={(e) =>
-        setAccountData((prev: any) => ({
-          ...prev,
-          moniker: e.target.value,
-        }))
-      }
-      fullWidth
-      margin="normal"
-    />
-
-    <div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => accountData && addRow(accountData)}
-        style={{ marginTop: 16 }}
+      {/* Modal for Adding/Editing Account */}
+      <Modal
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+        aria-labelledby="account-form-modal"
+        aria-describedby="account-form-modal-description"
       >
-        {accountData ? "Update" : "Add"}
-      </Button>
-      <Button
-        variant="outlined"
-        color="secondary"
-        onClick={() => setOpenForm(false)}
-        style={{ marginTop: 16, marginLeft: 8 }}
-      >
-        Cancel
-      </Button>
-    </div>
-  </Box>
-</Modal>
+        <Box
+          sx={{
+            width: 400,
+            padding: 4,
+            backgroundColor: "white",
+            margin: "auto",
+            top: "20%",
+            position: "relative",
+            boxShadow: 24,
+            borderRadius: 2,
+          }}
+        >
+          <h3>{accountData ? "Edit Account" : "Add New Account"}</h3>
 
+          <TextField
+            label="Account Name Owner"
+            value={accountData?.accountNameOwner || ""}
+            onChange={(e) =>
+              setAccountData((prev: any) => ({
+                ...prev,
+                accountNameOwner: e.target.value,
+              }))
+            }
+            fullWidth
+            margin="normal"
+          />
+
+          <TextField
+            label="Account Type"
+            value={accountData?.accountType || ""}
+            onChange={(e) =>
+              setAccountData((prev: any) => ({
+                ...prev,
+                accountType: e.target.value,
+              }))
+            }
+            fullWidth
+            margin="normal"
+          />
+
+          <TextField
+            label="Moniker"
+            value={accountData?.moniker || ""}
+            onChange={(e) =>
+              setAccountData((prev: any) => ({
+                ...prev,
+                moniker: e.target.value,
+              }))
+            }
+            fullWidth
+            margin="normal"
+          />
+
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => accountData && addRow(accountData)}
+              style={{ marginTop: 16 }}
+            >
+              {accountData ? "Update" : "Add"}
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setOpenForm(false)}
+              style={{ marginTop: 16, marginLeft: 8 }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
 }

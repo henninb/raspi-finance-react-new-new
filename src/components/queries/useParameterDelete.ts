@@ -5,18 +5,18 @@ import Parameter from "../model/Parameter";
 
 const deleteParameter = async (payload: Parameter): Promise<Parameter> => {
   try {
-  // TODO: change the word parm to the actual path.
-  const endpoint = "/api/parm/delete/" + payload.parameterName;
+    // TODO: change the word parm to the actual path.
+    const endpoint = "/api/parm/delete/" + payload.parameterName;
 
-  const response = await axios.delete(endpoint, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  return response.data;
-  } catch(error) {
+    const response = await axios.delete(endpoint, {
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: basicAuth(),
+      },
+    });
+    return response.data;
+  } catch (error) {
     console.error("Error in deleteParameter:", error);
     throw error;
   }

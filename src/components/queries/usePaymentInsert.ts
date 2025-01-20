@@ -24,12 +24,12 @@ const insertPayment = async (payload: Payment): Promise<any> => {
       },
     });
     return response.data;
-  } catch(error: any) {
-  if (axios.isAxiosError(error) && error.response) {
-    if (error.response.status === 404) {
-      console.error("Resource not found (404).", error.response.data);
-      // React to 404 specifically
-      return {
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 404) {
+        console.error("Resource not found (404).", error.response.data);
+        // React to 404 specifically
+        return {
           paymentId: Math.random(), // Generate unique ID
           accountNameOwner: payload.accountNameOwner,
           transactionDate: payload.transactionDate,
@@ -37,13 +37,12 @@ const insertPayment = async (payload: Payment): Promise<any> => {
           guidSource: "",
           guidDestination: "",
           activeStatus: true,
-        }
+        };
+      }
     }
-  }
-  
-  return { error: "An error occurred", details: error.message };
-}
 
+    return { error: "An error occurred", details: error.message };
+  }
 };
 
 export default function usePaymentInsert() {

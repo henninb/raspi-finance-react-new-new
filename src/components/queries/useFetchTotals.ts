@@ -17,11 +17,11 @@ const fetchTotals = async (): Promise<any> => {
   } catch (error) {
     console.error("Error fetching totals data:", error);
     return {
-      "totalsFuture": "-205.70",
-      "totalsCleared": "15287.53",
-      "totals": "152326.56",
-      "totalsOutstanding": "150.73"
-    }
+      totalsFuture: "-205.70",
+      totalsCleared: "15287.53",
+      totals: "152326.56",
+      totalsOutstanding: "150.73",
+    };
   }
 };
 

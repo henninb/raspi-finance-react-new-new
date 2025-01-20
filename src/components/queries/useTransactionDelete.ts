@@ -16,8 +16,8 @@ const deleteTransaction = async (payload: Transaction): Promise<any> => {
       },
     });
     return response.data;
-  } catch(error) {
-    return JSON.stringify(payload)
+  } catch (error) {
+    return JSON.stringify(payload);
   }
 };
 

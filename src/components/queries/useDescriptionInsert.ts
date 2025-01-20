@@ -15,7 +15,7 @@ const insertDescription = async (descriptionName: any): Promise<any> => {
       },
     });
     return response.data;
-  } catch( error: any) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 404) {
         console.error("Resource not found (404).", error.response.data);

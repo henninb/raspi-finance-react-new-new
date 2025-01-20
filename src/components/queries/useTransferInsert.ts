@@ -29,7 +29,7 @@ const insertTransfer = async (payload: Transfer): Promise<any> => {
       },
     });
     return response.data;
-  } catch(error: any) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 404) {
         console.error("Resource not found (404).", error.response.data);
@@ -45,7 +45,7 @@ const insertTransfer = async (payload: Transfer): Promise<any> => {
         };
       }
     }
-    
+
     return { error: "An error occurred", details: error.message };
   }
 };

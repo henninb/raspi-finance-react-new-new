@@ -30,9 +30,9 @@ export default function CategoryTable() {
 
   const handleSnackbarClose = () => setOpen(false);
 
-//   const handleDeleteRow = async (category: Category) => {
-//     await deleteCategory({ oldRow: category });
-//   };
+  //   const handleDeleteRow = async (category: Category) => {
+  //     await deleteCategory({ oldRow: category });
+  //   };
 
   const handleError = (error: any, moduleName: string, throwIt: boolean) => {
     const errorMsg =
@@ -78,9 +78,11 @@ export default function CategoryTable() {
       width: 120,
       renderCell: (params) => (
         <div>
-          <IconButton onClick={() => {//handleDeleteRow(params.row)
-          }
-          }>
+          <IconButton
+            onClick={() => {
+              //handleDeleteRow(params.row)
+            }}
+          >
             <DeleteIcon />
           </IconButton>
         </div>
@@ -106,8 +108,7 @@ export default function CategoryTable() {
             onClick={() => {
               setOpenForm(true);
               //setCategoryData(handleAddRow());
-            }
-          }
+            }}
             style={{ marginLeft: 8 }}
           >
             <AddIcon />
@@ -154,7 +155,10 @@ export default function CategoryTable() {
             label="Category"
             value={categoryData?.categoryName || ""}
             onChange={(e) =>
-              setCategoryData((prev: any) => ({ ...prev, categoryName: e.target.value }))
+              setCategoryData((prev: any) => ({
+                ...prev,
+                categoryName: e.target.value,
+              }))
             }
             fullWidth
             margin="normal"
