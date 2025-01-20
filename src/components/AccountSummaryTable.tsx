@@ -3,10 +3,10 @@ import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
 import { currencyFormat, noNaN } from "./Common";
 import SnackbarBaseline from "./SnackbarBaseline";
-import useFetchAccount from "./queries/useFetchAccount";
+import useFetchAccount from "./queries/useAccountFetch";
 import useAccountInsert from "./queries/useAccountInsert";
 import useAccountDelete from "./queries/useAccountDelete";
-import useFetchTotals from "./queries/useFetchTotals";
+import useFetchTotals from "./queries/useTotalsFetch";
 import Account from "./model/Account";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -235,7 +235,7 @@ export default function AccountSummaryTable() {
             columns={columns}
             rows={data}
             getRowId={(row) => row.accountId}
-            paginationModel={{ pageSize: data?.length, page: 0 }}
+            //paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
             processRowUpdate={(newRow: any, oldRow: any) => {
               // Handle row update here

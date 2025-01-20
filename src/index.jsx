@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./main.scss";
 import App from "./App";
 import { BrowserRouter, Outlet, createBrowserRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AccountSummaryTable from "./components/AccountSummaryTable";
 import PaymentTable from "./components/PaymentTable";
 import PaymentRequired from "./components/PaymentRequired";

@@ -5,7 +5,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
-import { currencyFormat, epochToDate, noNaN } from "./Common";
+import { currencyFormat, epochToDate, formatDate, noNaN } from "./Common";
 import SnackbarBaseline from "./SnackbarBaseline";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -20,14 +20,14 @@ import AddIcon from "@mui/icons-material/AddRounded";
 import AttachMoneyRounded from "@mui/icons-material/AttachMoneyRounded";
 import IconButton from "@mui/material/IconButton";
 import { useMatch, PathMatch } from "react-router-dom";
-import useFetchTransactionByAccount from "./queries/useFetchTransactionByAccount";
+import useFetchTransactionByAccount from "./queries/useTransactionByAccountFetch";
 import useChangeTransactionState from "./queries/useTransactionStateUpdate";
 import useTransactionUpdate from "./queries/useTransactionUpdate";
 import useTransactionDelete from "./queries/useTransactionDelete";
 import useTransactionInsert from "./queries/useTransactionInsert";
-import useFetchTotalsPerAccount from "./queries/useFetchTotalsPerAccount";
+import useFetchTotalsPerAccount from "./queries/useTotalsPerAccountFetch";
 import useReceiptImageUpdate from "./queries/useReceiptImageUpdate";
-import useFetchValidationAmount from "./queries/useFetchValidationAmount";
+import useFetchValidationAmount from "./queries/useValidationAmountFetch";
 import useValidationAmountInsert from "./queries/useValidationAmountInsert";
 import Transaction from "./model/Transaction";
 import { TransactionState } from "./model/TransactionState";
@@ -89,7 +89,7 @@ export default function TransactionTable() {
     useChangeTransactionState(accountNameOwner);
   const { mutate: updateTransaction } = useTransactionUpdate();
   const { mutate: deleteTransaction } = useTransactionDelete();
-  const { mutate: insertReceiptImage } = useReceiptImageUpdate();
+  //const { mutate: insertReceiptImage } = useReceiptImageUpdate();
   const { mutate: insertTransaction } = useTransactionInsert(accountNameOwner);
   const { mutate: insertValidationAmount } = useValidationAmountInsert();
 
@@ -152,6 +152,7 @@ export default function TransactionTable() {
 
     const payload: ValidationAmount = {
       activeStatus: true,
+      validationId: Math.random(),
       amount: totals.totalsCleared,
       transactionState: transactionState,
       validationDate: new Date(),
@@ -169,7 +170,7 @@ export default function TransactionTable() {
 
   const handlerToUpdateTransactionState = async (
     guid: string,
-    transactionState: string,
+    transactionState: TransactionState,
   ) => {
     await updateTransactionState({
       guid: guid,
@@ -264,7 +265,7 @@ export default function TransactionTable() {
       width: 275,
       editable: true,
       renderCell: (params: any) => {
-        const handleStateChange = (newState: string) => {
+        const handleStateChange = (newState: TransactionState) => {
           const transactionGuid = params.row.guid;
           console.log("parms: " + params.row.guid);
           handlerToUpdateTransactionState(transactionGuid, newState);
@@ -274,7 +275,7 @@ export default function TransactionTable() {
 
         return (
           <Box>
-            {transactionStates.map((option) => (
+            {transactionStates.map((option: any) => (
               <Button
                 key={option}
                 variant={params.value === option ? "contained" : "outlined"}
@@ -411,7 +412,7 @@ export default function TransactionTable() {
               : "$0.00"}{" "}
             {" - "}{" "}
             {validationData?.validationDate
-              ? epochToDate(validationData?.validationDate).toLocaleString()
+              ? formatDate(validationData?.validationDate).toLocaleString()
               : "1970-01-01T00:00:00:000Z"}
           </Button>
 

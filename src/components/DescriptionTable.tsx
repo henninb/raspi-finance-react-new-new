@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import SnackbarBaseline from "./SnackbarBaseline";
-import useFetchDescription from "./queries/useFetchDescription";
+import useFetchDescription from "./queries/useDescriptionFetch";
 import useDescriptionInsert from "./queries/useDescriptionInsert";
 import Description from "./model/Description";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -42,11 +42,11 @@ export default function DescriptionTable() {
 
   const addRow = async (newData: Description): Promise<string> => {
     try {
-      const descriptionPayload = {
-        ...newData,
-        status: true,
-      };
-      await insertDescription({ payload: descriptionPayload });
+      // const descriptionPayload = {
+      //   ...newData,
+      //   status: true,
+      // };
+      await insertDescription(newData);
       return "success";
     } catch (error) {
       handleError(error, "addRow", false);

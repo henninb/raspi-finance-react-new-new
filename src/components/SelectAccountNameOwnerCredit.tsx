@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Select, { SingleValue } from "react-select";
-import useFetchAccount from "./queries/useFetchAccount";
+import useFetchAccount from "./queries/useAccountFetch";
 
 export type Props = {
   onChangeFunction: (value: string) => void;

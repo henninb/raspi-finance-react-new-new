@@ -1,51 +1,52 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Payment from "../model/Payment";
+//import { basicAuth } from "../Common";
 
-const deletePayment = async (payload: Payment): Promise<string> => {
+const deletePayment = async (payload: Payment): Promise<Payment> => {
   try {
-    const endpoint = "/api/payment/delete/" + payload?.paymentId;
+    const endpoint =
+      "https://finance.lan/api/payment/delete/" + payload.paymentId;
 
-    const response = await axios.delete(endpoint, {
-      timeout: 0,
+    const response = await fetch(endpoint, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: basicAuth(),
       },
     });
-    return response.data;
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.log("Resource not found (404).", await response.json());
+        return payload;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
-    return JSON.stringify(payload);
+    console.error("Error deleting payment:", error);
+    console.log("An error occurred:", error);
+    return payload;
   }
 };
 
 export default function usePaymentDelete() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["deletePayment"],
-    (variables: any) => deletePayment(variables.oldRow),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (_response, variables) => {
-        const oldData: any = queryClient.getQueryData("payment");
-        const newData = oldData.filter((t: any) => {
-          return t.paymentId !== variables.oldRow.paymentId;
-        });
-        queryClient.setQueryData("payment", newData);
-      },
+  return useMutation({
+    mutationKey: ["deletePayment"],
+    mutationFn: (variables: { oldRow: Payment }) =>
+      deletePayment(variables.oldRow),
+    onError: (error) => {
+      console.log(error ? error : "error is undefined.");
     },
-  );
+    onSuccess: (_response, variables) => {
+      const oldData: any = queryClient.getQueryData(["payment"]) || [];
+      const newData = oldData.filter(
+        (t: Payment) => t.paymentId !== variables.oldRow.paymentId,
+      );
+      queryClient.setQueryData(["payment"], newData);
+    },
+  });
 }

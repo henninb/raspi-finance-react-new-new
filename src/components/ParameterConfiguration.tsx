@@ -5,7 +5,7 @@ import { IconButton, Modal, Box, Button, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteRounded";
 import EditIcon from "@mui/icons-material/CreateRounded";
 import AddIcon from "@mui/icons-material/AddRounded";
-import useFetchParameters from "./queries/useFetchParameters";
+import useFetchParameters from "./queries/useParameterFetch";
 import useParameterDelete from "./queries/useParameterDelete";
 import useParameterUpdate from "./queries/useParameterUpdate";
 import Parameter from "./model/Parameter";
@@ -16,7 +16,7 @@ export default function ParameterConfiguration() {
   const [parameterData, setParameterData] = useState<Parameter | null>(null); // Store parameter being edited
   const { data, isSuccess } = useFetchParameters();
   const { mutate: deleteParameter } = useParameterDelete();
-  const { mutate: updateParameter } = useParameterUpdate();
+  //const { mutate: updateParameter } = useParameterUpdate();
 
   useEffect(() => {
     if (isSuccess) {
@@ -31,7 +31,7 @@ export default function ParameterConfiguration() {
   const handleUpdate = async (newData: Parameter) => {
     if (parameterData) {
       const updatedData = { ...parameterData, ...newData };
-      await updateParameter({ newRow: updatedData, oldRow: parameterData });
+      //await updateParameter({ newRow: updatedData, oldRow: parameterData });
     }
   };
 
@@ -92,7 +92,7 @@ export default function ParameterConfiguration() {
           <DataGrid
             columns={columns}
             rows={data}
-            paginationModel={{ pageSize: data?.length, page: 0 }}
+            //paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
             getRowId={(row: Parameter) => row.parameterId}
           />

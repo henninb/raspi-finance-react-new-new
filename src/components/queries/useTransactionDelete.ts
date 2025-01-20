@@ -1,63 +1,64 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
-import { getAccountKey } from "./KeyFile";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Transaction from "../model/Transaction";
 
-const deleteTransaction = async (payload: Transaction): Promise<any> => {
-  try {
-    const endpoint = "/api/transaction/delete/" + payload.guid;
+const getAccountKey = (accountNameOwner: string) => [
+  "accounts",
+  accountNameOwner,
+];
 
-    const response = await axios.delete(endpoint, {
-      timeout: 0,
+const deleteTransaction = async (
+  payload: Transaction,
+): Promise<Transaction> => {
+  try {
+    const endpoint =
+      "https://finance.lan/api/transaction/delete/" + payload.guid;
+
+    const response = await fetch(endpoint, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: `Basic ${btoa("username:password")}`, // Replace with dynamic basicAuth if needed
       },
     });
-    return response.data;
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.log("Resource not found (404).", await response.json());
+        return payload;
+        //return { ...payload, error: "Resource not found." };
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
-    return JSON.stringify(payload);
+    console.log("An error occurred:", error);
+    return payload;
+    //throw error;
   }
 };
 
 export default function useTransactionDelete() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["deleteTransaction"],
-    (variables: any) => deleteTransaction(variables.oldRow),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      //might have a different key?
-      onSuccess: (response, variables) => {
-        const oldData: any = queryClient.getQueryData(
-          getAccountKey(variables.oldRow.accountNameOwner),
-        );
-        const newData = oldData.filter(
-          (t: any) => t.transactionId !== variables.oldRow.transactionId,
-        );
-        queryClient.setQueryData(
-          getAccountKey(variables.oldRow.accountNameOwner),
-          newData,
-        );
-      },
-      onSettled: () => {
-        // let myPromise = queryClient.invalidateQueries(
-        //   getAccountKey(variables.oldRow.accountNameOwner)
-        // );
-      },
+  return useMutation({
+    mutationKey: ["deleteTransaction"],
+    mutationFn: (variables: { oldRow: Transaction }) =>
+      deleteTransaction(variables.oldRow),
+    onError: (error) => {
+      console.log(error ? error : "error is undefined.");
     },
-  );
+    onSuccess: (response, variables) => {
+      const oldData: any = queryClient.getQueryData(
+        getAccountKey(variables.oldRow.accountNameOwner),
+      );
+      const newData = oldData.filter(
+        (t: any) => t.transactionId !== variables.oldRow.transactionId,
+      );
+      queryClient.setQueryData(
+        getAccountKey(variables.oldRow.accountNameOwner),
+        newData,
+      );
+    },
+  });
 }

@@ -1,25 +1,24 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Category from "../model/Category";
+//import { basicAuth } from "../Common";
 
-const insertCategory = async (categoryName: any): Promise<any> => {
+const insertCategory = async (categoryName: string): Promise<Category> => {
   try {
-    const endpoint = "/api/category/insert";
+    const endpoint = "https://finance.lan/api/category/insert";
     const payload = { category: categoryName, activeStatus: true };
 
-    const response = await axios.post(endpoint, payload, {
-      timeout: 0,
+    const response = await fetch(endpoint, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: basicAuth(),
       },
+      body: JSON.stringify(payload),
     });
-    return response.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 404) {
-        console.error("Resource not found (404).", error.response.data);
-        // React to 404 specifically
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.error("Resource not found (404).", await response.json());
         return {
           categoryId: Math.random(),
           categoryName: categoryName,
@@ -28,34 +27,28 @@ const insertCategory = async (categoryName: any): Promise<any> => {
           dateUpdated: new Date(),
         };
       }
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error("An error occurred:", error);
+    throw error;
   }
 };
 
 export default function useCategoryInsert() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["insertCategory"],
-    (variables: any) => insertCategory(variables.categoryName),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (response) => {
-        const oldData: any = queryClient.getQueryData("category");
-        const newData = [response, ...oldData];
-        queryClient.setQueryData("category", newData);
-      },
+  return useMutation({
+    mutationFn: (variables: { categoryName: string }) =>
+      insertCategory(variables.categoryName),
+    onError: (error: unknown) => {
+      console.error(error || "An unknown error occurred.");
     },
-  );
+    onSuccess: (newCategory) => {
+      const oldData: Category[] = queryClient.getQueryData(["category"]) || [];
+      queryClient.setQueryData(["category"], [newCategory, ...oldData]);
+    },
+  });
 }

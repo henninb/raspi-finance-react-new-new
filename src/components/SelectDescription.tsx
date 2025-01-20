@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import useDescriptionInsert from "./queries/useDescriptionInsert";
-import useFetchDescription from "./queries/useFetchDescription";
+import useFetchDescription from "./queries/useDescriptionFetch";
 import TextField from "@mui/material/TextField";
 
 interface Description {

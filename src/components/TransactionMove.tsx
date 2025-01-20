@@ -8,7 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import SnackbarBaseline from "./SnackbarBaseline";
-import useFetchAccount from "./queries/useFetchAccount";
+import useFetchAccount from "./queries/useAccountFetch";
 import useTransactionUpdate from "./queries/useTransactionUpdate";
 import Transaction from "./model/Transaction";
 

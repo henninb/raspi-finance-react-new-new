@@ -1,7 +1,7 @@
 import React, { useEffect, useState, KeyboardEvent } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import useFetchCategory from "./queries/useFetchCategory";
+import useFetchCategory from "./queries/useCategoryFetch";
 
 // Define the category type
 interface Category {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
-import useFetchAccount from "./queries/useFetchAccount";
+import useFetchAccount from "./queries/useAccountFetch";
 
 export default function SelectAccountsNew() {
   const [options, setOptions] = useState([]);
@@ -15,7 +15,7 @@ export default function SelectAccountsNew() {
 
   useEffect(() => {
     if (isSuccess) {
-      const optionList = data.map(({ accountNameOwner }: any) => {
+      const optionList: any = data.map(({ accountNameOwner }: any) => {
         return { value: accountNameOwner, label: accountNameOwner };
       });
       if (optionList.length > 0) {

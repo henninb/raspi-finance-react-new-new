@@ -1,7 +1,6 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Account from "../model/Account";
+//import { basicAuth } from "../Common";
 
 const setupNewAccount = (payload: Account) => {
   return {
@@ -18,23 +17,25 @@ const setupNewAccount = (payload: Account) => {
   };
 };
 
-const insertAccount = async (payload: Account): Promise<any> => {
+const insertAccount = async (payload: Account): Promise<Account> => {
   try {
-    const endpoint = "/api/account/insert";
+    const endpoint = "https://finance.lan/api/account/insert";
     const newPayload = setupNewAccount(payload);
 
-    const response = await axios.post(endpoint, newPayload, {
-      timeout: 0,
+    const response = await fetch(endpoint, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: basicAuth(),
       },
+      body: JSON.stringify(newPayload),
     });
-    return response.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 404) {
-        console.error("Resource not found (404).", error.response.data);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.log("Resource not found (404).", await response.json());
+        //console.error("Resource not found (404).", await response.json());
+        // console.log(payload.accountNameOwner)
         // React to 404 specifically
         return {
           accountId: Math.random(),
@@ -50,36 +51,59 @@ const insertAccount = async (payload: Account): Promise<any> => {
           activeStatus: true,
         };
       }
+      const errorDetails = await response.json();
+      throw new Error(
+        `HTTP error! Status: ${response.status} Details: ${JSON.stringify(errorDetails)}`,
+      );
     }
 
-    return { error: "An error occurred", details: error.message };
+    return await response.json();
+  } catch (error: any) {
+    console.log({
+      accountId: Math.random(),
+      accountNameOwner: payload.accountNameOwner,
+      accountType: payload.accountType,
+      moniker: payload.moniker,
+      cleared: 0.0,
+      future: 0.0,
+      outstanding: 0.0,
+      dateClosed: new Date(0),
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
+      activeStatus: true,
+    });
+    return {
+      accountId: Math.random(),
+      accountNameOwner: payload.accountNameOwner,
+      accountType: payload.accountType,
+      moniker: payload.moniker,
+      cleared: 0.0,
+      future: 0.0,
+      outstanding: 0.0,
+      dateClosed: new Date(0),
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
+      activeStatus: true,
+    };
   }
 };
 
 export default function useAccountInsert() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["insertAccount"],
-    (variables: any) => insertAccount(variables.payload),
-    {
-      onError: (error: AxiosError) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (response) => {
-        const oldData: any = queryClient.getQueryData("account");
-        const newData = [response, ...oldData];
-        queryClient.setQueryData("account", newData);
-      },
+  return useMutation({
+    mutationKey: ["insertAccount"],
+    mutationFn: (variables: { payload: Account }) =>
+      insertAccount(variables.payload),
+    onError: (error: any) => {
+      console.error(error ? error : "Error is undefined.");
     },
-  );
+    onSuccess: (response: Account) => {
+      const oldData: Account[] | undefined = queryClient.getQueryData([
+        "account",
+      ]);
+      const newData = oldData ? [response, ...oldData] : [response];
+      queryClient.setQueryData(["account"], newData);
+    },
+  });
 }

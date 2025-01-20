@@ -1,67 +1,64 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+//import { basicAuth } from "../Common";
 import Account from "../model/Account";
 
 const updateAccount = async (
   oldRow: Account,
   newRow: Account,
-): Promise<any> => {
+): Promise<Account> => {
   try {
-    let endpoint = "/api/account/update/" + oldRow.accountNameOwner;
+    let endpoint = `/api/account/update/${oldRow.accountNameOwner}`;
 
-    const response = await axios.put(endpoint, newRow, {
-      timeout: 0,
+    const response = await fetch(endpoint, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: basicAuth(),
       },
+      body: JSON.stringify(newRow),
     });
-    return response.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 404) {
-        console.error("Resource not found (404).", error.response.data);
-        // React to 404 specifically
-        return newRow;
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.error("Resource not found (404).", await response.json());
+        return newRow; // React to 404 specifically
       }
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return { error: "An error occurred", details: error.message };
+    return await response.json();
+  } catch (error: any) {
+    throw new Error(`An error occurred: ${error.message}`);
   }
 };
 
 export default function useAccountUpdate() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["updateAccount"],
-    (variables: any) => updateAccount(variables.oldRow, variables.newRow),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (response: any) => {
-        const oldData = queryClient.getQueryData<Account[]>("account");
-
-        if (oldData) {
-          // Combine the response with the existing data
-          const newData = [response, ...oldData];
-          queryClient.setQueryData("account", newData);
-        } else {
-          // If no old data, initialize with the new response
-          queryClient.setQueryData("account", [response]);
-        }
-      },
+  return useMutation({
+    mutationKey: ["updateAccount"],
+    mutationFn: (variables: { oldRow: Account; newRow: Account }) =>
+      updateAccount(variables.oldRow, variables.newRow),
+    onError: (error: any) => {
+      console.error(error ? error : "Error is undefined.");
     },
-  );
+    onSuccess: (response: Account) => {
+      const oldData: Account[] | undefined = queryClient.getQueryData([
+        "account",
+      ]);
+
+      if (oldData) {
+        // Update the existing data with the response
+        const newData = oldData.map((account) =>
+          account.accountNameOwner === response.accountNameOwner
+            ? response
+            : account,
+        );
+        queryClient.setQueryData(["account"], newData);
+      } else {
+        // If no old data, initialize with the new response
+        queryClient.setQueryData(["account"], [response]);
+      }
+    },
+  });
 }

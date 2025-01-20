@@ -1,51 +1,53 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Transfer from "../model/Transfer";
+//import { basicAuth } from "../Common";
 
-const deleteTransfer = async (payload: Transfer): Promise<string> => {
+const deleteTransfer = async (payload: Transfer): Promise<Transfer> => {
   try {
-    const endpoint = "/api/transfer/delete/" + payload.transferId;
+    const endpoint =
+      "https://finance.lan/api/transfer/delete/" + payload.transferId;
 
-    const response = await axios.delete(endpoint, {
-      timeout: 0,
+    const response = await fetch(endpoint, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: basicAuth(),
       },
     });
-    return response.data;
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.log("Resource not found (404).", await response.json());
+        return payload;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
-    return JSON.stringify(payload);
+    console.error("Error deleting transfer:", error);
+    //return JSON.stringify(payload);
+    console.log("An error occurred:", error);
+    return payload;
   }
 };
 
 export default function useTransferDelete() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["deleteTransfer"],
-    (variables: any) => deleteTransfer(variables.oldRow),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (_response, variables) => {
-        const oldData: any = queryClient.getQueryData("transfer");
-        const newData = oldData.filter(
-          (t: any) => t.transferId !== variables.oldRow.transferId,
-        );
-        queryClient.setQueryData("transfer", newData);
-      },
+  return useMutation({
+    mutationKey: ["deleteTransfer"],
+    mutationFn: (variables: { oldRow: Transfer }) =>
+      deleteTransfer(variables.oldRow),
+    onError: (error) => {
+      console.log(error ? error : "error is undefined.");
     },
-  );
+    onSuccess: (_response, variables) => {
+      const oldData: any = queryClient.getQueryData(["transfer"]) || [];
+      const newData = oldData.filter(
+        (t: Transfer) => t.transferId !== variables.oldRow.transferId,
+      );
+      queryClient.setQueryData(["transfer"], newData);
+    },
+  });
 }

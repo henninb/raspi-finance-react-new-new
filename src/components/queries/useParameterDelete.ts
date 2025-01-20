@@ -1,55 +1,51 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Parameter from "../model/Parameter";
+//import { basicAuth } from "../Common";
 
 const deleteParameter = async (payload: Parameter): Promise<Parameter> => {
   try {
-    // TODO: change the word parm to the actual path.
-    const endpoint = "/api/parm/delete/" + payload.parameterName;
+    const endpoint = `https://finance.lan/api/parm/delete/${payload.parameterName}`;
 
-    const response = await axios.delete(endpoint, {
-      timeout: 0,
+    const response = await fetch(endpoint, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: basicAuth(),
       },
     });
-    return response.data;
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.log("Parameter not found (404). Check the parameter name.");
+        return payload;
+      }
+      throw new Error(`An error occurred: ${response.statusText}`);
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error("Error in deleteParameter:", error);
-    throw error;
+    console.log("Error in deleteParameter:", error);
+    return payload;
   }
 };
 
 export default function useParameterDelete() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["deleteParameter"],
-    (variables: any) => deleteParameter(variables.oldRow),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (response, variables) => {
-        const oldData: any = queryClient.getQueryData("parameter");
-        console.log("delete was a success.");
-        //let oldData: any = queryClient.getQueryData("parameter");
-        const newData = oldData.filter(
-          (t: any) => t.parameterName !== variables.oldRow.parameterName,
-        );
-        queryClient.setQueryData("parameter", newData);
-      },
+  return useMutation({
+    mutationKey: ["deleteParameter"],
+    mutationFn: (variables: any) => deleteParameter(variables.oldRow),
+    onError: (error) => {
+      console.error("Mutation error:", error);
     },
-  );
+    onSuccess: (response, variables) => {
+      console.log("Delete was successful.", response);
+
+      const oldData: any = queryClient.getQueryData(["parameter"]) || [];
+      const newData = oldData.filter(
+        (item: any) => item.parameterName !== variables.oldRow.parameterName,
+      );
+      queryClient.setQueryData(["parameter"], newData);
+    },
+  });
 }

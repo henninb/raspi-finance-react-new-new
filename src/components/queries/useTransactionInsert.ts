@@ -1,15 +1,18 @@
-import { basicAuth } from "../Common";
 import { v4 as uuidv4 } from "uuid";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
-import { getAccountKey } from "./KeyFile";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Transaction from "../model/Transaction";
+//import { basicAuth } from "../Common";
 
 export type TransactionInsertType = {
   accountNameOwner: string;
   newRow: Transaction;
   isFutureTransaction: boolean;
 };
+
+const getAccountKey = (accountNameOwner: string) => [
+  "accounts",
+  accountNameOwner,
+];
 
 const setupNewTransaction = (
   payload: Transaction,
@@ -19,33 +22,17 @@ const setupNewTransaction = (
     guid: uuidv4(),
     transactionDate: payload.transactionDate,
     description: payload.description,
-    category: payload.category ? payload.category : "undefined",
-    notes: payload.notes === undefined ? "" : payload.notes,
+    category: payload.category || "undefined",
+    notes: payload.notes || "",
     amount: payload.amount,
-    dueDate: payload.dueDate ? payload.dueDate : undefined,
-    transactionType: payload.transactionType
-      ? payload.transactionType
-      : "undefined",
-    transactionState: payload.transactionState
-      ? payload.transactionState
-      : "outstanding",
+    dueDate: payload.dueDate || undefined,
+    transactionType: payload.transactionType || "undefined",
+    transactionState: payload.transactionState || "outstanding",
     activeStatus: true,
-    accountType: payload.accountType ? payload.accountType : "undefined",
-    reoccurringType: payload.reoccurringType
-      ? payload.reoccurringType
-      : "onetime",
+    accountType: payload.accountType || "undefined",
+    reoccurringType: payload.reoccurringType || "onetime",
     accountNameOwner: accountNameOwner,
   };
-
-  //TODO: fix dueDate
-  // if (payload['dueDate'] === "") {
-  //     delete payload['dueDate']
-  // }
-  //
-  // if (payload['dueDate'] !== "") {
-  //     newPayload['dueDate'] = payload.dueDate
-  // }
-  //return newPayload
 };
 
 const insertTransaction = async (
@@ -53,60 +40,62 @@ const insertTransaction = async (
   payload: Transaction,
   isFutureTransaction: boolean,
 ): Promise<any> => {
-  let endpoint = "/api/transaction/insert";
+  let endpoint = "https://finance.lan/api/transaction/insert";
   if (isFutureTransaction) {
     endpoint = "/transaction/future/insert";
-    console.log("will insert futureTransaction");
+    console.log("Will insert futureTransaction");
   }
 
   const newPayload = setupNewTransaction(payload, accountNameOwner);
 
-  console.log("newPayload: " + JSON.stringify(newPayload));
-  const response = await axios.post(endpoint, newPayload, {
-    timeout: 0,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: basicAuth(),
-    },
-  });
-  console.log(JSON.stringify(response.data));
-  return response.data;
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //Authorization: basicAuth(),
+      },
+      body: JSON.stringify(newPayload),
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.log("Endpoint not found:", endpoint);
+        //throw new Error("Resource not found (404)");
+        return payload;
+      }
+      throw new Error(`Failed to insert transaction: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Response data:", JSON.stringify(data));
+    return data;
+  } catch (error) {
+    console.log("Error inserting transaction:", error);
+    // throw error; // Allow react-query to handle it
+    return payload;
+  }
 };
 
-export default function useTransactionInsert(accountNameOwner: any) {
+export default function useTransactionInsert(accountNameOwner: string) {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["insertTransaction"],
-    (variables: TransactionInsertType) =>
+  return useMutation({
+    mutationKey: ["insertTransaction"],
+    mutationFn: (variables: TransactionInsertType) =>
       insertTransaction(
         accountNameOwner,
         variables.newRow,
         variables.isFutureTransaction,
       ),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-        //handleError(error, 'fetchAccountData', true)
-      },
-
-      onSuccess: (response) => {
-        const oldData: any = queryClient.getQueryData(
-          getAccountKey(accountNameOwner),
-        );
-        if (oldData) {
-          const newData = [response, ...oldData];
-          queryClient.setQueryData(getAccountKey(accountNameOwner), newData);
-        }
-      },
+    onError: (error: any) => {
+      console.error(`Mutation error: ${error.message}`);
     },
-  );
+    onSuccess: (response: Transaction) => {
+      const oldData: Transaction[] =
+        queryClient.getQueryData(getAccountKey(accountNameOwner)) || [];
+      const newData = [response, ...oldData];
+      queryClient.setQueryData(getAccountKey(accountNameOwner), newData);
+    },
+  });
 }

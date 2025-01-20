@@ -7,7 +7,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import TextField from "@mui/material/TextField";
-import useFetchTransfer from "./queries/useFetchTransfer";
+import useFetchTransfer from "./queries/useTransferFetch";
 import useTransferInsert from "./queries/useTransferInsert";
 import useTransferDelete from "./queries/useTransferDelete";
 import Transfer from "./model/Transfer";

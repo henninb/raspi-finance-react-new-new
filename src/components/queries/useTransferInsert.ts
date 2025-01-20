@@ -1,79 +1,65 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Transfer from "../model/Transfer";
+//import { basicAuth } from "../Common";
 
-const setupNewTransfer = (payload: Transfer) => {
-  console.log(JSON.stringify(payload));
-  console.log("transfer payload");
+const overRideTransferValues = (payload: Transfer) => {
   return {
-    guidSource: payload.guidSource,
-    guidDestination: payload.guidDestination,
-    sourceAccount: payload.sourceAccount,
-    destinationAccount: payload.destinationAccount,
-    amount: payload.amount,
-    transactionDate: payload.transactionDate.toISOString(),
+    amount: payload?.amount,
+    transactionDate: payload?.transactionDate,
   };
 };
 
-const insertTransfer = async (payload: Transfer): Promise<any> => {
+const insertTransfer = async (payload: Transfer): Promise<Transfer> => {
   try {
-    const endpoint = "/api/transfer/insert";
-    const newPayload = setupNewTransfer(payload);
+    const endpoint = "https://finance.lan/api/transfer/insert";
+    const newPayload = overRideTransferValues(payload);
 
-    const response = await axios.post(endpoint, newPayload, {
-      timeout: 0,
+    const response = await fetch(endpoint, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: basicAuth(),
       },
+      body: JSON.stringify(newPayload),
     });
-    return response.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 404) {
-        console.error("Resource not found (404).", error.response.data);
-        // React to 404 specifically
-        return {
-          transferId: Math.random(),
-          guidSource: payload.guidSource,
-          guidDestination: payload.guidDestination,
-          sourceAccount: payload.sourceAccount,
-          destinationAccount: payload.destinationAccount,
-          amount: payload.amount,
-          transactionDate: payload.transactionDate.toISOString(),
-        };
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.error("Resource not found (404).", await response.json());
+        return payload;
+        // return {
+        //   transferId: Math.random(), // Generate unique ID
+        //   sourceAccount: payload.sourceAccount,
+        //   destinationAccount: payload.destinationAccount,
+        //   transactionDate: payload.transactionDate,
+        //   amount: payload.amount,
+        //   activeStatus: true,
+        // };
       }
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return { error: "An error occurred", details: error.message };
+    return await response.json();
+  } catch (error) {
+    console.log("An error occurred:", error);
+    //throw error;
+    return payload;
   }
 };
 
 export default function useTransferInsert() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["insertTransfer"],
-    (variables: any) => insertTransfer(variables.payload),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (response) => {
-        const oldData: any = queryClient.getQueryData("transfer");
-        const newData = [response, ...oldData];
-        queryClient.setQueryData("transfer", newData);
-      },
+  return useMutation({
+    mutationKey: ["insertTransfer"],
+    mutationFn: (variables: { payload: Transfer }) =>
+      insertTransfer(variables.payload),
+    onError: (error) => {
+      console.log(error ? error : "error is undefined.");
     },
-  );
+    onSuccess: (newTransfer) => {
+      const oldData: any = queryClient.getQueryData(["transfer"]) || [];
+      queryClient.setQueryData(["transfer"], [newTransfer, ...oldData]);
+    },
+  });
 }

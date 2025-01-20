@@ -1,25 +1,26 @@
-import { basicAuth } from "../Common";
-import axios, { AxiosError } from "axios";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Description from "../model/Description";
+//import { basicAuth } from "../Common";
 
-const insertDescription = async (descriptionName: any): Promise<any> => {
+const insertDescription = async (
+  descriptionName: string,
+): Promise<Description> => {
   try {
-    const endpoint = "/api/description/insert";
+    const endpoint = "https://finance.lan/api/description/insert";
     const payload = { description: descriptionName, activeStatus: true };
 
-    const response = await axios.post(endpoint, payload, {
-      timeout: 0,
+    const response = await fetch(endpoint, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: basicAuth(),
+        //Authorization: basicAuth(),
       },
+      body: JSON.stringify(payload),
     });
-    return response.data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 404) {
-        console.error("Resource not found (404).", error.response.data);
-        // React to 404 specifically
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.error("Resource not found (404).");
         return {
           descriptionId: Math.random(),
           descriptionName: descriptionName,
@@ -28,34 +29,29 @@ const insertDescription = async (descriptionName: any): Promise<any> => {
           dateUpdated: new Date(),
         };
       }
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error("Error occurred:", error);
+    throw error;
   }
 };
 
 export default function useDescriptionInsert() {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["insertDescription"],
-    (variables: any) => insertDescription(variables.descriptionName),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (response) => {
-        const oldData: any = queryClient.getQueryData("description");
-        const newData = [response, ...oldData];
-        queryClient.setQueryData("description", newData);
-      },
+  return useMutation({
+    mutationFn: (variables: { descriptionName: string }) =>
+      insertDescription(variables.descriptionName),
+    onError: (error: unknown) => {
+      console.error(error || "An unknown error occurred.");
     },
-  );
+    onSuccess: (newDescription) => {
+      const oldData: Description[] =
+        queryClient.getQueryData(["description"]) || [];
+      queryClient.setQueryData(["description"], [newDescription, ...oldData]);
+    },
+  });
 }

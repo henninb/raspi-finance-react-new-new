@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
-import useFetchPaymentRequired from "./queries/useFetchPaymentRequired";
+import useFetchPaymentRequired from "./queries/usePaymentRequiredFetch";
 //import PaymentRequired from "./model/PaymentRequired";
 
 export default function PaymentRequired() {
@@ -98,7 +98,7 @@ export default function PaymentRequired() {
           <DataGrid
             columns={columns}
             rows={data}
-            paginationModel={{ pageSize: data?.length, page: 0 }}
+            //paginationModel={{ pageSize: data?.length, page: 0 }}
             hideFooterPagination={true}
             getRowId={(row: any) => row.accountNameOwner}
           />

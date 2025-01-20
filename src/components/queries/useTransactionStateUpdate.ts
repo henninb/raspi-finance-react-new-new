@@ -1,6 +1,5 @@
-import axios, { AxiosError } from "axios";
-import { basicAuth } from "../Common";
-import { useMutation, useQueryClient } from "react-query";
+//import { basicAuth } from "../Common";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TransactionState } from "../model/TransactionState";
 import Transaction from "../model/Transaction";
 
@@ -30,60 +29,58 @@ const changeTransactionState = async (
   guid: string,
   newTransactionState: TransactionState,
 ): Promise<Transaction> => {
+  const endpoint = `https://finance.lan/api/transaction/state/update/${guid}/${newTransactionState}`;
   try {
-    const response = await axios.put(
-      "/api/transaction/state/update/" + guid + "/" + newTransactionState,
-      "{}",
-      {
-        timeout: 0,
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: basicAuth(),
-        },
+    const response = await fetch(endpoint, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        //Authorization: basicAuth(),
       },
-    );
-    return response.data;
-  } catch (error) {
-    return dataTest;
+      body: JSON.stringify({}),
+    });
+
+    if (response.status === 404) {
+      console.error("Resource not found (404).");
+      return dataTest; // Return fallback data for 404
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to update transaction state: ${response.statusText}`,
+      );
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error("Error updating transaction state:", error.message);
+    return dataTest; // Return fallback data on error
   }
 };
 
 export default function useTransactionStateUpdate(accountNameOwner: string) {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    ["transactionState"],
-    (variables: any) =>
-      changeTransactionState(variables.guid, variables.transactionState),
-    {
-      onError: (error: AxiosError<any>) => {
-        console.log(error ? error : "error is undefined.");
-        console.log(
-          error.response ? error.response : "error.response is undefined.",
-        );
-        console.log(
-          error.response
-            ? JSON.stringify(error.response)
-            : "error.response is undefined - cannot stringify.",
-        );
-      },
-
-      onSuccess: (response: any) => {
-        const oldData: any = queryClient.getQueryData(
-          getAccountKey(accountNameOwner),
-        );
-
-        const newData = oldData.map((element: any) => {
-          if (element["guid"] === response.guid) {
-            return { ...element, transactionState: response.transactionState };
-          } else {
-            return element;
-          }
-        });
-
-        queryClient.setQueryData(getAccountKey(accountNameOwner), newData);
-      },
+  return useMutation({
+    mutationKey: ["transactionState"],
+    mutationFn: (variables: {
+      guid: string;
+      transactionState: TransactionState;
+    }) => changeTransactionState(variables.guid, variables.transactionState),
+    onError: (error: any) => {
+      console.error(`Error occurred during mutation: ${error.message}`);
     },
-  );
+    onSuccess: (response: Transaction) => {
+      const oldData: Transaction[] =
+        queryClient.getQueryData(getAccountKey(accountNameOwner)) || [];
+      const newData = oldData.map((element) =>
+        element.guid === response.guid
+          ? { ...element, transactionState: response.transactionState }
+          : element,
+      );
+
+      queryClient.setQueryData(getAccountKey(accountNameOwner), newData);
+    },
+  });
 }

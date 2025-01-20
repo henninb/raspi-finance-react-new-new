@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Select, { SingleValue, ActionMeta } from "react-select";
 import { useNavigate } from "react-router-dom";
-import useFetchAccount from "./queries/useFetchAccount";
+import useFetchAccount from "./queries/useAccountFetch";
 
 interface Account {
   accountNameOwner: string;

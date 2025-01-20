@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import SnackbarBaseline from "./SnackbarBaseline";
-import useFetchCategory from "./queries/useFetchCategory";
+import useFetchCategory from "./queries/useCategoryFetch";
 import useCategoryInsert from "./queries/useCategoryInsert";
 //import useCategoryDelete from "./queries/useCategoryDelete";
 import Category from "./model/Category";
@@ -46,11 +46,12 @@ export default function CategoryTable() {
 
   const addRow = async (newData: Category): Promise<string> => {
     try {
-      const categoryData = {
-        ...newData,
-        activeStatus: true,
-      };
-      await insertCategory({ payload: categoryData });
+      // const categoryData: Category = {
+      //   ...newData,
+      //   activeStatus: true,
+      //   categoryName: newData.categoryName
+      // };
+      await insertCategory(newData);
       return "success";
     } catch (error) {
       handleError(error, "addRow", false);
