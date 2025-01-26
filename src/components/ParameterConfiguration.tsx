@@ -25,7 +25,7 @@ export default function ParameterConfiguration() {
   }, [isSuccess]);
 
   const handleDelete = async (parameter: Parameter) => {
-    await deleteParameter({ oldRow: parameter });
+    await deleteParameter(parameter);
   };
 
   const handleUpdate = async (newData: Parameter) => {

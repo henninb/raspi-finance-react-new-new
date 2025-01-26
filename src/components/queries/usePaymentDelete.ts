@@ -17,15 +17,13 @@ const deletePayment = async (payload: Payment): Promise<Payment> => {
 
     if (!response.ok) {
       if (response.status === 404) {
-        console.log("Resource not found (404).", await response.json());
-        return payload;
+        console.log("Resource not found (404).");
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error deleting payment:", error);
     console.log("An error occurred:", error);
     return payload;
   }

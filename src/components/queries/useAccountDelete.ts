@@ -17,7 +17,6 @@ const deleteAccount = async (payload: Account): Promise<Account> => {
     if (!response.ok) {
       if (response.status === 404) {
         console.log("Resource not found (404).", await response.json());
-        return payload; // React to 404 specifically
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -44,7 +43,7 @@ export default function useAccountDelete() {
         "account",
       ]);
       if (oldData) {
-        const newData = oldData.filter(
+        const newData: Account[] = oldData.filter(
           (t: Account) => t.accountId !== variables.oldRow.accountId,
         );
         queryClient.setQueryData(["account"], newData);

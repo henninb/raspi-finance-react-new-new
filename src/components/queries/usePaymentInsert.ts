@@ -26,15 +26,7 @@ const insertPayment = async (payload: Payment): Promise<Payment> => {
 
     if (!response.ok) {
       if (response.status === 404) {
-        console.error("Resource not found (404).", await response.json());
-        return payload;
-        // return {
-        //   paymentId: Math.random(), // Generate unique ID
-        //   accountNameOwner: payload.accountNameOwner,
-        //   transactionDate: payload.transactionDate,
-        //   amount: payload.amount,
-        //   activeStatus: true,
-        // };
+        console.log("Resource not found (404).");
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -58,7 +50,7 @@ export default function usePaymentInsert() {
       console.log(error ? error : "error is undefined.");
     },
     onSuccess: (newPayment) => {
-      const oldData: any = queryClient.getQueryData(["paymnet"]) || [];
+      const oldData: any = queryClient.getQueryData(["payment"]) || [];
       queryClient.setQueryData(["payment"], [newPayment, ...oldData]);
     },
   });

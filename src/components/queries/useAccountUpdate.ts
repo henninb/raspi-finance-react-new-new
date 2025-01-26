@@ -7,7 +7,7 @@ const updateAccount = async (
   newRow: Account,
 ): Promise<Account> => {
   try {
-    let endpoint = `/api/account/update/${oldRow.accountNameOwner}`;
+    let endpoint = `https://finance.lan/api/account/update/${oldRow.accountNameOwner}`;
 
     const response = await fetch(endpoint, {
       method: "PUT",
@@ -20,15 +20,15 @@ const updateAccount = async (
 
     if (!response.ok) {
       if (response.status === 404) {
-        console.error("Resource not found (404).", await response.json());
-        return newRow; // React to 404 specifically
+        console.log("Resource not found (404).", await response.json());
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return await response.json();
   } catch (error: any) {
-    throw new Error(`An error occurred: ${error.message}`);
+    console.log(`An error occurred: ${error.message}`);
+    return newRow;
   }
 };
 

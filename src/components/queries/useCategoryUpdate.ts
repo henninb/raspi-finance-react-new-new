@@ -1,12 +1,12 @@
 //import { basicAuth } from "../Common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Parameter from "../model/Parameter";
+import Category from "../model/Category";
 
-const updateParameter = async (
-  oldParameter: Parameter,
-  newParameter: Parameter,
-): Promise<Parameter> => {
-  const endpoint = `https://finance.lan/api/parm/update/${oldParameter.parameterName}`;
+const updateCategory = async (
+  oldCategory: Category,
+  newCategory: Category,
+): Promise<Category> => {
+  const endpoint = `https://finance.lan/api/category/update/${oldCategory.categoryName}`;
   try {
     const response = await fetch(endpoint, {
       method: "PUT",
@@ -31,35 +31,35 @@ const updateParameter = async (
     return await response.json();
   } catch (error: any) {
     console.log("Error updating transaction state:", error.message);
-    return newParameter; // Return fallback data on error
+    return newCategory; // Return fallback data on error
   }
 };
 
-export default function useParameterUpdate() {
+export default function useCategoryUpdate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ["parameterUpdate"],
+    mutationKey: ["categoryUpdate"],
     mutationFn: ({
-      oldParameter,
-      newParameter,
+      oldCategory,
+      newCategory,
     }: {
-      oldParameter: Parameter;
-      newParameter: Parameter;
-    }) => updateParameter(oldParameter, newParameter),
+      oldCategory: Category;
+      newCategory: Category;
+    }) => updateCategory(oldCategory, newCategory),
     onError: (error: any) => {
       console.error(`Error occurred during mutation: ${error.message}`);
     },
-    onSuccess: (updatedParameter: Parameter) => {
-      const oldData = queryClient.getQueryData<Parameter[]>(["parameter"]);
+    onSuccess: (updatedCategory: Category) => {
+      const oldData = queryClient.getQueryData<Category[]>(["category"]);
       if (oldData) {
         const newData = oldData.map((element) =>
-          element.parameterName === updatedParameter.parameterName
-            ? { ...element, ...updatedParameter }
+          element.categoryName === updatedCategory.categoryName
+            ? { ...element, ...updatedCategory }
             : element,
         );
 
-        queryClient.setQueryData(["parameter"], newData);
+        queryClient.setQueryData(["category"], newData);
       }
     },
   });

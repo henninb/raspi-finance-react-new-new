@@ -21,21 +21,21 @@ const insertDescription = async (
     if (!response.ok) {
       if (response.status === 404) {
         console.error("Resource not found (404).");
-        return {
-          descriptionId: Math.random(),
-          descriptionName: descriptionName,
-          activeStatus: true,
-          dateAdded: new Date(),
-          dateUpdated: new Date(),
-        };
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return await response.json();
   } catch (error: any) {
-    console.error("Error occurred:", error);
-    throw error;
+    console.log("Error occurred:", error);
+    //throw error;
+    return {
+      descriptionId: Math.random(),
+      descriptionName: descriptionName,
+      activeStatus: true,
+      dateAdded: new Date(),
+      dateUpdated: new Date(),
+    };
   }
 };
 

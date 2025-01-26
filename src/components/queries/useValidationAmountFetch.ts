@@ -15,7 +15,7 @@ const dataTest =
   };
 //];
 
-const fetchValidationAmountData = async (
+export const fetchValidationAmount = async (
   accountNameOwner: string,
 ): Promise<ValidationAmount> => {
   const endpoint = `https://finance.lan/api/validation/amount/select/${accountNameOwner}/cleared`;
@@ -33,8 +33,6 @@ const fetchValidationAmountData = async (
     if (!response.ok) {
       if (response.status === 404) {
         console.log("Resource not found (404)");
-        //throw new Error("Resource not found (404)");
-        return dataTest;
       }
       throw new Error(
         `Failed to fetch validation amount data: ${response.statusText}`,
@@ -44,7 +42,6 @@ const fetchValidationAmountData = async (
     return response.json();
   } catch (error) {
     console.log("Error fetching validationAmount data:", error);
-    //return dataTest; // Return fallback data
     return {
       validationId: Math.random(),
       validationDate: new Date(),
@@ -59,7 +56,7 @@ const fetchValidationAmountData = async (
 export default function useValidationAmountFetch(accountNameOwner: string) {
   const queryResult = useQuery({
     queryKey: ["validationAmount", accountNameOwner],
-    queryFn: () => fetchValidationAmountData(accountNameOwner),
+    queryFn: () => fetchValidationAmount(accountNameOwner),
   });
 
   if (queryResult.isError) {

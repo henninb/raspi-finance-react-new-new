@@ -23,9 +23,7 @@ const deleteTransaction = async (
 
     if (!response.ok) {
       if (response.status === 404) {
-        console.log("Resource not found (404).", await response.json());
-        return payload;
-        //return { ...payload, error: "Resource not found." };
+        console.log("Resource not found (404).");
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -49,11 +47,21 @@ export default function useTransactionDelete() {
       console.log(error ? error : "error is undefined.");
     },
     onSuccess: (response, variables) => {
+      //console.log("Fetching transactions for key:", ["accounts", variables.oldRow.accountNameOwner]);
+      //console.log("Deleting transaction with key:", getAccountKey(variables.oldRow.accountNameOwner));
       const oldData: any = queryClient.getQueryData(
         getAccountKey(variables.oldRow.accountNameOwner),
       );
+      if (!oldData) {
+        console.log(
+          "No data found for key:",
+          getAccountKey(variables.oldRow.accountNameOwner),
+        );
+        return;
+      }
+
       const newData = oldData.filter(
-        (t: any) => t.transactionId !== variables.oldRow.transactionId,
+        (t: Transaction) => t.transactionId !== variables.oldRow.transactionId,
       );
       queryClient.setQueryData(
         getAccountKey(variables.oldRow.accountNameOwner),

@@ -1,12 +1,12 @@
 //import { basicAuth } from "../Common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Parameter from "../model/Parameter";
+import Description from "../model/Description";
 
-const updateParameter = async (
-  oldParameter: Parameter,
-  newParameter: Parameter,
-): Promise<Parameter> => {
-  const endpoint = `https://finance.lan/api/parm/update/${oldParameter.parameterName}`;
+const updateDescription = async (
+  oldDescription: Description,
+  newDescription: Description,
+): Promise<Description> => {
+  const endpoint = `https://finance.lan/api/description/update/${oldDescription.descriptionName}`;
   try {
     const response = await fetch(endpoint, {
       method: "PUT",
@@ -31,35 +31,35 @@ const updateParameter = async (
     return await response.json();
   } catch (error: any) {
     console.log("Error updating transaction state:", error.message);
-    return newParameter; // Return fallback data on error
+    return newDescription; // Return fallback data on error
   }
 };
 
-export default function useParameterUpdate() {
+export default function useDescriptionUpdate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ["parameterUpdate"],
+    mutationKey: ["descriptionUpdate"],
     mutationFn: ({
-      oldParameter,
-      newParameter,
+      oldDescription,
+      newDescription,
     }: {
-      oldParameter: Parameter;
-      newParameter: Parameter;
-    }) => updateParameter(oldParameter, newParameter),
+      oldDescription: Description;
+      newDescription: Description;
+    }) => updateDescription(oldDescription, newDescription),
     onError: (error: any) => {
       console.error(`Error occurred during mutation: ${error.message}`);
     },
-    onSuccess: (updatedParameter: Parameter) => {
-      const oldData = queryClient.getQueryData<Parameter[]>(["parameter"]);
+    onSuccess: (updatedDescription: Description) => {
+      const oldData = queryClient.getQueryData<Description[]>(["description"]);
       if (oldData) {
-        const newData = oldData.map((element) =>
-          element.parameterName === updatedParameter.parameterName
-            ? { ...element, ...updatedParameter }
+        const newData = oldData.map((element: Description) =>
+          element.descriptionName === updatedDescription.descriptionName
+            ? { ...element, ...updatedDescription }
             : element,
         );
 
-        queryClient.setQueryData(["parameter"], newData);
+        queryClient.setQueryData(["description"], newData);
       }
     },
   });

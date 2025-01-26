@@ -14,7 +14,7 @@ const dataTest: Transaction = {
   description: "balance adjustment",
   category: "none",
   amount: 1.99,
-  transactionState: "outstanding",
+  transactionState: "future",
   activeStatus: true,
   reoccurringType: "onetime",
   notes: "",
@@ -42,8 +42,7 @@ const changeTransactionState = async (
     });
 
     if (response.status === 404) {
-      console.error("Resource not found (404).");
-      return dataTest; // Return fallback data for 404
+      console.log("Resource not found (404).");
     }
 
     if (!response.ok) {
@@ -54,8 +53,8 @@ const changeTransactionState = async (
 
     return await response.json();
   } catch (error: any) {
-    console.error("Error updating transaction state:", error.message);
-    return dataTest; // Return fallback data on error
+    console.log("Error updating transaction state:", error.message);
+    return dataTest;
   }
 };
 
@@ -74,11 +73,19 @@ export default function useTransactionStateUpdate(accountNameOwner: string) {
     onSuccess: (response: Transaction) => {
       const oldData: Transaction[] =
         queryClient.getQueryData(getAccountKey(accountNameOwner)) || [];
-      const newData = oldData.map((element) =>
-        element.guid === response.guid
+      const newData = oldData.map((element) => {
+        console.log(
+          `Processing element with transactionState: ${element.transactionState} and response.transactionState: ${response.transactionState}`,
+        );
+        return element.transactionState === response.transactionState
           ? { ...element, transactionState: response.transactionState }
-          : element,
-      );
+          : element;
+      });
+      // const newData = oldData.map((element) =>
+      //   element.transactionState === response.transactionState
+      //     ? { ...element, transactionState: response.transactionState }
+      //     : element,
+      // );
 
       queryClient.setQueryData(getAccountKey(accountNameOwner), newData);
     },
