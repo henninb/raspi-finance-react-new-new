@@ -88,6 +88,16 @@ export default function PaymentRequired() {
         }),
       cellClassName: "nowrap",
     },
+    {
+      field: "validationDate",
+      headerName: "Validation Date",
+      width: 150,
+      type: "date",
+      valueGetter: (params) => new Date(params),
+      renderCell: (params) => {
+        return params?.value?.toLocaleDateString("en-US");
+      },
+    },
   ];
 
   return (

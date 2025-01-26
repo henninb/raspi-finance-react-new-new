@@ -114,6 +114,22 @@ export default function AccountSummaryTable() {
         }),
       cellClassName: "nowrap",
     },
+    {
+      field: "activeStatus",
+      headerName: "Active",
+      width: 75,
+      editable: true,
+    },
+    {
+      field: "validationDate",
+      headerName: "Validation Date",
+      width: 150,
+      type: "date",
+      valueGetter: (params) => new Date(params),
+      renderCell: (params) => {
+        return params?.value?.toLocaleDateString("en-US");
+      },
+    },
     // {
     //   field: "aftermath",
     //   headerName: "Aftermath",
@@ -187,19 +203,19 @@ export default function AccountSummaryTable() {
     });
   };
 
-  const deleteRow = (oldData: any) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          await deleteAccount({ oldRow: oldData });
-          resolve("success");
-        } catch (error) {
-          handleError(error, "onRowDelete", false);
-          reject();
-        }
-      }, 1000);
-    });
-  };
+  // const deleteRow = (oldData: any) => {
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(async () => {
+  //       try {
+  //         await deleteAccount({ oldRow: oldData });
+  //         resolve("success");
+  //       } catch (error) {
+  //         handleError(error, "onRowDelete", false);
+  //         reject();
+  //       }
+  //     }, 1000);
+  //   });
+  // };
 
   const handleAddRow = () => {
     return {
