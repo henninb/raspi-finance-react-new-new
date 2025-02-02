@@ -53,8 +53,8 @@ if [ "$ENV" = "prod" ]; then
 else
   echo npx npm-check-updates -u
   echo npx depcheck
-  npm install
   npm run prettier
+  npm install
   npm test
   NODE_OPTIONS=--openssl-legacy-provider yarn start
 fi
