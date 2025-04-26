@@ -1,9 +1,9 @@
-FROM nginx:1.25.2-alpine
+FROM nginx:1.25.3-alpine
 
 ARG TIMEZONE="set the time zone at build time"
 ENV TIMEZONE ${TIMEZONE}
 
-RUN cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
+# RUN cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 
 COPY ./ssl /etc/nginx/certs/
 COPY ./build /usr/share/nginx/html
