@@ -27,15 +27,15 @@ export CURRENT_GID="$(id -g)"
 echo HOST_IP=$HOST_IP
 
 mkdir -p ssl
-# rm -rf build
+rm -rf build
 
 echo npm run build
 # npm run build
 if [ "$ENV" = "prod" ]; then
-  # if ! npm run build; then
-    # echo "npm build failed"
-    # exit 1
-  # fi
+  if ! npm run build; then
+    echo "npm build failed"
+    exit 1
+  fi
 
   export PODMAN_HOST=ssh://henninb@192.168.10.10/run/user/1000/podman/podman.sock
   export CONTAINER_HOST=ssh://henninb@192.168.10.10/run/user/1000/podman/podman.sock
@@ -46,14 +46,7 @@ if [ "$ENV" = "prod" ]; then
 
   podman compose build
   podman compose up -d
-  exit 0
-  # if ! podman compose -f docker-compose.yml up -d; then
-    # echo "docker-compose up failed."
-    # exit 1
-  # fi
   podman ps -a
-  # docker save -o raspi-finance-react-docker-${date}.tar raspi-finance-react:latest
-  # echo docker exec -it raspi-finance-react /bin/sh
 else
   echo npx npm-check-updates -u
   echo npx depcheck
